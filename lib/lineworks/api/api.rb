@@ -1,7 +1,7 @@
-require 'line_works/api/version'
+require 'lineworks/api/version'
 
-module LineWorks
-  module API
+module Lineworks
+  module Api
     #DEFAULT_OAUTH_ENDPOINT = "https://api.line.me"
     DEFAULT_ENDPOINT = "https://www.worksapis.com/v1.0"
     #DEFAULT_BLOB_ENDPOINT = "https://api-data.line.me/v2"
@@ -9,7 +9,7 @@ module LineWorks
 
     DEFAULT_HEADERS = {
       'Content-Type' => 'application/json; charset=UTF-8',
-      'User-Agent'   => "LINEWORKS-API-Ruby/#{VERSION}"
+      'User-Agent'   => "LINEWORKS-API/#{VERSION}"
     }.freeze
   end
 end

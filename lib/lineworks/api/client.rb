@@ -2,11 +2,11 @@ require 'line/bot'
 
 # @see: message types https://developers.worksmobile.com/jp/docs/bot-send-content
 
-module LineWorks
-  module Bot
+module Lineworks
+  module Api
     # API Client of Line Works Bot SDK Ruby
     #
-    #   @client ||= LineWorks::Bot::Client.new do |config|
+    #   @client ||= Lineworks::Bot::Client.new do |config|
     #     config.channel_secret = ENV["LINE_WORKS_BOT_SECRET"]
     #     config.channel_token = ENV["LINE_WORKS_ACCESS_TOKEN"]
     #   end

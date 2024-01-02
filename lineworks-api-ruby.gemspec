@@ -3,7 +3,7 @@
 require_relative "lib/lineworks/api/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "lineworks-api-ruby"
+  spec.name = "lineworks-api"
   spec.version = Lineworks::Api::VERSION
   spec.authors = ["Katsuyoshi Ito"]
   spec.email = ["kito@itosoft.com"]
