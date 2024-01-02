@@ -13,7 +13,7 @@ module Lineworks
     class Client < Line::Bot::Client
 
       def endpoint
-        @endpoint ||= API::DEFAULT_ENDPOINT
+        @endpoint ||= DEFAULT_ENDPOINT
       end
 
       # Push messages to a channel using channel_id.
