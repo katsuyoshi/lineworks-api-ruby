@@ -2,6 +2,6 @@ require 'spec_helper'
 require 'webmock/rspec'
 require 'json'
 
-#describe Lineworks::Api::Client do
+# describe Lineworks::Api::Client do
 
-#end
+# end

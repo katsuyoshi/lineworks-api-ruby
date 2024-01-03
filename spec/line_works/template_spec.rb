@@ -3,7 +3,6 @@ require 'webmock/rspec'
 require 'json'
 
 describe Lineworks::Api::Message::Template do
-
   it 'get the text message' do
     message = 'Hello, world'
     response = Lineworks::Api::Message::Template.text message
@@ -48,7 +47,7 @@ describe Lineworks::Api::Message::Template do
     expected = {
       type: 'image',
       previewImageUrl: original_url,
-      originalContentUrl: original_url,
+      originalContentUrl: original_url
     }
     expect(response).to eq(expected)
   end
@@ -70,7 +69,7 @@ describe Lineworks::Api::Message::Template do
 
     expected = {
       type: 'file',
-      originalContentUrl: file_url,
+      originalContentUrl: file_url
     }
     expect(response).to eq(expected)
   end
@@ -123,7 +122,8 @@ describe Lineworks::Api::Message::Template do
       Lineworks::Api::Message::Action.postback('label', 'data')
     ]
     elements = [
-      Lineworks::Api::Message::Template.list_element(title: 'title', sub_title: 'sub_title', content_url: 'https://example.com/sample.png', actions: element_actions)
+      Lineworks::Api::Message::Template.list_element(title: 'title', sub_title: 'sub_title',
+                                                     content_url: 'https://example.com/sample.png', actions: element_actions)
     ]
     actions = [
       [
@@ -134,7 +134,7 @@ describe Lineworks::Api::Message::Template do
       ]
     ]
     response = Lineworks::Api::Message::Template.list(cover, elements, actions)
-    
+
     expected = {
       type: 'list_template',
       cover: cover,
@@ -147,7 +147,8 @@ describe Lineworks::Api::Message::Template do
   it 'get the carousel message' do
     action = Lineworks::Api::Message::Action.postback('label', 'data')
     columns = [
-      Lineworks::Api::Message::Template.carousel_column(original_content_url: 'https://example.com/sample.png', title: 'title', text: 'text', default_action: action, actions: [action])
+      Lineworks::Api::Message::Template.carousel_column(original_content_url: 'https://example.com/sample.png',
+                                                        title: 'title', text: 'text', default_action: action, actions: [action])
     ]
     response = Lineworks::Api::Message::Template.carousel('rectangle', 'cover', columns)
 
@@ -162,24 +163,24 @@ describe Lineworks::Api::Message::Template do
 
   it 'get the flexible message' do
     alt_text = 'alt_text'
-    contents =  {
-      "type": "bubble",
+    contents = {
+      "type": 'bubble',
       "body": {
-        "type": "box",
-        "layout": "vertical",
+        "type": 'box',
+        "layout": 'vertical',
         "contents": [
           {
-            "type": "text",
-            "text": "hello"
+            "type": 'text',
+            "text": 'hello'
           },
           {
-            "type": "text",
-            "text": "world"
+            "type": 'text',
+            "text": 'world'
           }
         ]
       }
     }
-    
+
     response = Lineworks::Api::Message::Template.flexible alt_text, contents
 
     expected = {
@@ -189,5 +190,4 @@ describe Lineworks::Api::Message::Template do
     }
     expect(response).to eq(expected)
   end
-
 end

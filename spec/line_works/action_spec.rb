@@ -3,7 +3,6 @@ require 'webmock/rspec'
 require 'json'
 
 describe Lineworks::Api::Message::Action do
-
   it 'get the postback action' do
     label = 'label'
     data = 'data'
@@ -92,6 +91,4 @@ describe Lineworks::Api::Message::Action do
     }
     expect(response).to eq(expected)
   end
-
-
 end
