@@ -17,14 +17,11 @@ post '/callback' do
   body = request.body.read
 
   signature = request.env['HTTP_X_WORKS_SIGNATURE']
-  unless client.validate_signature(body, signature)
-    error 400 do 'Bad Request' end
-  end
+  error 400 do 'Bad Request' end unless client.validate_signature(body, signature)
 
   bot_id = request.env['HTTP_X_WORKS_BOTID']
   body = JSON.parse(body)
   channel_id = body['source']['channelId']
-  user_id = body['source']['userId']
 
   case body['type']
   when 'message'
