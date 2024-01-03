@@ -1,6 +1,6 @@
 # Echo Bot
 
-An example LINE WORKS bot just to echo messages
+For example, the LINE WORKS bot echoes back messages.  
 
 ## Getting started
 
@@ -34,11 +34,11 @@ And use ngrok to publish it.
 $ ngrok http 4567
 .
 .
-Forwarding                    https://6db9-240b-13-74e0-45f0-f1b9-b7b8-ddf2-e191.ngrok-free.app -> http://localhost
+Forwarding      https://6db9-240b-13-74e0-45f0-f1b9-b7b8-ddf2-e191.ngrok-free.app -> http://localhost
 .
 .
 ```
 
-Set the forwarding address to the callback setting of your bot by the console of LINE WORKS
-
+Set the forwarding address to the callback setting of your bot by the console of LINE WORKS.  
+(in this case;  https://6db9-240b-13-74e0-45f0-f1b9-b7b8-ddf2-e191.ngrok-free.app/callback)
 
