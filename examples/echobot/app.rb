@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra'       # gem 'sinatra'
 require 'lineworks-api' # gem 'lineworks-api'
 require 'dotenv'        # gem 'dotenv'
@@ -5,10 +7,10 @@ require 'dotenv'        # gem 'dotenv'
 Dotenv.load
 
 def client
-  @client ||= Lineworks::Api::Client.new { |config|
-    config.channel_secret = ENV["LINE_WORKS_BOT_SECRET"]
-    config.channel_token = ENV["LINE_WORKS_ACCESS_TOKEN"]
-  }
+  @client ||= Lineworks::Api::Client.new do |config|
+    config.channel_secret = ENV['LINE_WORKS_BOT_SECRET']
+    config.channel_token = ENV['LINE_WORKS_ACCESS_TOKEN']
+  end
 end
 
 post '/callback' do
@@ -30,5 +32,5 @@ post '/callback' do
   end
 
   # Don't forget to return a successful response
-  "OK"
+  'OK'
 end

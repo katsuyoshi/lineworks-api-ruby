@@ -1,16 +1,16 @@
+# frozen_string_literal: true
+
 module Lineworks
   module Api
     module Message
       # @see: https://developers.worksmobile.com/jp/docs/bot-channel-message-send
       class Template
-
         class << self
-
           # Get a text message hash value.
           #
           # @param messages [String] Message
           # @return [Hash]
-          def text message
+          def text(message)
             {
               type: 'text',
               text: message
@@ -22,7 +22,7 @@ module Lineworks
           # @param package_id [Integer] Package Id
           # @param sticker_id [Integer] Sticker Id
           # @return [Hash]
-          def stamp package_id, sticker_id
+          def stamp(package_id, sticker_id)
             {
               type: 'sticker',
               packageId: package_id.to_s,
@@ -35,11 +35,11 @@ module Lineworks
           # @param preview_url [String] Preview image url (png)
           # @param original_url [String] Original image url (png)
           # @return [Hash]
-          def image original_url, preview_url = nil 
+          def image(original_url, preview_url = nil)
             {
               type: 'image',
               previewImageUrl: preview_url || original_url,
-              originalContentUrl: original_url,
+              originalContentUrl: original_url
             }
           end
 
@@ -48,7 +48,7 @@ module Lineworks
           # @param preview_url [Integer] Preview image url (png)
           # @param filed [String] File id
           # @return [Hash]
-          def image_with_file file_id
+          def image_with_file(file_id)
             {
               type: 'image',
               fileId: file_id
@@ -59,10 +59,10 @@ module Lineworks
           #
           # @param file_url [String] File url
           # @return [Hash]
-          def file file_url
+          def file(file_url)
             {
               type: 'file',
-              originalContentUrl: file_url,
+              originalContentUrl: file_url
             }
           end
 
@@ -70,10 +70,10 @@ module Lineworks
           #
           # @param file_url [String] File url
           # @return [Hash]
-          def file_with_id file_id
+          def file_with_id(file_id)
             {
               type: 'file',
-              fileId: file_id,
+              fileId: file_id
             }
           end
 
@@ -83,7 +83,7 @@ module Lineworks
           # @param link [String] Link text
           # @param url [String] Link url
           # @return [Hash]
-          def link content, link, url
+          def link(content, link, url)
             {
               type: 'link',
               contentText: content,
@@ -98,7 +98,7 @@ module Lineworks
           # @param actions [Hash] Actions
           # @param url [String] Link url
           # @return [Hash]
-          def button title, actions
+          def button(title, actions)
             {
               type: 'button',
               contentText: title,
@@ -108,32 +108,32 @@ module Lineworks
 
           # Get a List template.
           #
-          def list cover, elements, actions = [[], []]
+          def list(cover, elements, actions = [[], []])
             ListTemplate.new(cover, elements, actions).to_h
           end
 
           # Get a cover data for list template.
           #
-          # @param args [Hash] 
+          # @param args [Hash]
           #   title [String] Title text
           #   sub_title [String] Sub title text
           #   image_url [String] Image url
           #   file_id [String] File id
           # @return [Hash]
-          def list_cover args
+          def list_cover(args)
             ListTemplate::Cover.new(args).to_h
           end
 
           # Get a cover data for list template.
           #
-          # @param args [Hash] 
+          # @param args [Hash]
           #   title [String] Title text
           #   sub_title [String] Sub title text
           #   content_url [String] Content url
           #   file_id [String] File id
           #   actions [Array] Actions
           # @return [Hash]
-          def list_element args
+          def list_element(args)
             ListTemplate::Element.new(args).to_h
           end
 
@@ -141,7 +141,7 @@ module Lineworks
           # @param image_aspect_ratio [String] :rectangle or :square
           # @param image_size [String] :cover or :contain
           # @param columns [Array] Columns
-          def carousel image_aspect_ratio = 'rectangle', image_size = 'cover', columns = []
+          def carousel(image_aspect_ratio = 'rectangle', image_size = 'cover', columns = [])
             CarouselTemplate.new(image_aspect_ratio, image_size, columns).to_h
           end
 
@@ -153,26 +153,22 @@ module Lineworks
           #   text [String] Text
           #   default_action [Hash] Default action
           #   actions [Array] Actions
-          def carousel_column args
+          def carousel_column(args)
             CarouselTemplate::Column.new(args).to_h
           end
 
           # Create a flexible object.
           # @param alt_text [String] Alt text
           # @param contents [Hash] Contents
-          def flexible alt_text, contents
+          def flexible(alt_text, contents)
             {
               type: 'flex',
               altText: alt_text,
               contents: contents
             }
           end
-
         end
-
       end
-
-      private
 
       class ListTemplate
         attr_accessor :cover, :elements, :actions
@@ -182,7 +178,7 @@ module Lineworks
         # @param cover [Cover] Cover data
         # @param elements [Array] Element data
         # @param actions [Array] Actions
-        def initialize cover, elements = [], actions = [[], []]
+        def initialize(cover, elements = [], actions = [[], []])
           @cover = cover
           @elements = elements
           @actions = actions
@@ -193,26 +189,25 @@ module Lineworks
             type: 'list_template',
             cover: @cover.to_h,
             elements: @elements.map(&:to_h),
-            actions: @actions.map{_1.map(&:to_h)}
+            actions: @actions.map { _1.map(&:to_h) }
           }
         end
 
-        
         # cover data for list template.
         class Cover
           attr_accessor :title, :sub_title, :image_url, :file_id
 
           # Get a cover data for list template.
           #
-          # @param args [Hash] 
+          # @param args [Hash]
           #   title [String] Title text
           #   sub_title [String] Sub title text
           #   image_url [String] Image url
           #   file_id [String] File id
           # @return [Hash]
-          def initialize args
+          def initialize(args)
             @title = args[:title]
-            @sub_title = args[:sub_title  ]
+            @sub_title = args[:sub_title]
             @image_url = args[:image_url]
             @file_id = args[:file_id]
           end
@@ -234,16 +229,16 @@ module Lineworks
 
           # Get a cover data for list template.
           #
-          # @param args [Hash] 
+          # @param args [Hash]
           #   title [String] Title text
           #   sub_title [String] Sub title text
           #   content_url [String] Content url
           #   file_id [String] File id
           #   actions [Array] Actions
           # @return [Hash]
-          def initialize args
+          def initialize(args)
             @title = args[:title]
-            @sub_title = args[:sub_title  ]
+            @sub_title = args[:sub_title]
             @content_url = args[:content_url]
             @file_id = args[:file_id]
             @actions = args[:actions]
@@ -260,8 +255,6 @@ module Lineworks
             }.compact
           end
         end
-
-        attr_accessor :cover, :elements, :actions
       end
 
       # Get carousel template object.
@@ -272,7 +265,7 @@ module Lineworks
         # @param image_aspect_ratio [String] :rectangle or :square
         # @param image_size [String] :cover or :contain
         # @param columns [Array] Columns
-        def initialize image_aspect_ratio = 'rectangle', image_size = 'cover', columns = []
+        def initialize(image_aspect_ratio = 'rectangle', image_size = 'cover', columns = [])
           @image_aspect_ratio = image_aspect_ratio
           @image_size = image_size
           @columns = columns
@@ -290,7 +283,7 @@ module Lineworks
         # Get a carousel column object.
         class Column
           attr_accessor :original_content_url, :file_id, :title, :text, :default_action, :actions
-          
+
           # Create a column object.
           # @param args [Hash]
           #   original_content_url [String] Original content url
@@ -299,7 +292,7 @@ module Lineworks
           #   text [String] Text
           #   default_action [Hash] Default action
           #   actions [Array] Actions
-          def initialize args
+          def initialize(args)
             @original_content_url = args[:original_content_url]
             @file_id = args[:file_id]
             @title = args[:title]
@@ -319,11 +312,8 @@ module Lineworks
               actions: @actions
             }.compact
           end
-
         end
-
       end
-
     end
   end
 end
