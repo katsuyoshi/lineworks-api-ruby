@@ -24,7 +24,7 @@ rake install:local
 ```
 
 __Caution:__   
-The below instruction is not ready because it’s not registered to the RubyGems.
+The instruction below is not ready because it’s not registered to RubyGems.  
 Refer below after registration.
 
 
