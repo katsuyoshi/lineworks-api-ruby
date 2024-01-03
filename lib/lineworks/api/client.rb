@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'line/bot'
+require 'lineworks/api/event'
 
 # @see: message types https://developers.worksmobile.com/jp/docs/bot-send-content
 
@@ -66,6 +67,22 @@ module Lineworks
         payload = payload.to_json
         post(endpoint, endpoint_path, payload, credentials.merge(headers))
       end
+
+      # Parse events from request.body
+      #
+      # @param request_body [String]
+      #
+      # @return Line::Bot::Event::Class
+      def parse_event_from(request_body)
+        json = JSON.parse(request_body)
+        begin
+          klass = Event.const_get(Line::Bot::Util.camelize(json['type']))
+          klass.new(json)
+        rescue NameError
+          Event::Base.new(json)
+        end
+      end
+
     end
   end
 end

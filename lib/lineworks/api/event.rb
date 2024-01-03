@@ -1,0 +1,7 @@
+require_relative 'event/base'
+require_relative 'event/message'
+require_relative 'event/postback'
+require_relative 'event/join'
+require_relative 'event/leave'
+require_relative 'event/joined'
+require_relative 'event/left'
