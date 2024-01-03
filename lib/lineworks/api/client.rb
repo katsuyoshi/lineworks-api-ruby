@@ -68,6 +68,10 @@ module Lineworks
         post(endpoint, endpoint_path, payload, credentials.merge(headers))
       end
 
+      def parse_events_from(request_body)
+        parse_event_from(request_body)
+      end
+
       # Parse events from request.body
       #
       # @param request_body [String]
