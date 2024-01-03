@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lineworks-api-ruby (0.1.0)
+    lineworks-api (0.1.0)
       true
 
 GEM
@@ -51,7 +51,7 @@ PLATFORMS
   arm64-darwin-23
 
 DEPENDENCIES
-  lineworks-api-ruby!
+  lineworks-api!
   minitest (~> 5.0)
   rake (~> 13.0)
   rubocop (~> 1.21)

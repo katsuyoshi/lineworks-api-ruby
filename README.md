@@ -14,6 +14,20 @@ Pleas visit official API documentation.
 ## Installation
 
 
+Download this project.  
+Move to the project directory.  
+Run rake command.  
+
+```
+bundle install
+rake install:local
+```
+
+__Caution:__   
+The below instruction is not ready because it’s not registered to the RubyGems.
+Refer below after registration.
+
+
 Add this line to your application's Gemfile:
 
 ```ruby

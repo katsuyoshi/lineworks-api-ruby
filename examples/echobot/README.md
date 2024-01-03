@@ -3,6 +3,15 @@
 For example, the LINE WORKS bot echoes back messages.  
 
 ## Getting started
+Download this project.  
+Move to the project directory.  
+Run rake command.  
+
+```
+rake install:local
+```
+
+Move to the examples/echobot directory.  
 
 Install required gems.
 
@@ -14,6 +23,13 @@ Copy .env.sample file to .env file.
 And then fill environment variables to .env file.
 
 ```
+# LINE WORKS's Bot Secret
+LINE_WORKS_BOT_SECRET='...'
+
+# You need to get an access token first.
+# There is an article about how to get an access token using Postman. Please refer to it.
+# @see: https://qiita.com/mmclsntr/items/eee8d8f3546410fe6652
+LINE_WORKS_ACCESS_TOKEN='...'
 ```
 
 Run this example.
