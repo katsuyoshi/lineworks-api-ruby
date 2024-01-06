@@ -63,31 +63,30 @@ require 'dotenv'        # gem 'dotenv'
 Dotenv.load
 
 def client
-  @client ||= Lineworks::Api::Client.new { |config|
-    config.channel_secret = ENV["LINE_WORKS_BOT_SECRET"]
-    config.channel_token = ENV["LINE_WORKS_ACCESS_TOKEN"]
-  }
+  @client ||= Lineworks::Api::Client.new do |config|
+    config.channel_secret = ENV['LINE_WORKS_BOT_SECRET']
+    config.channel_token = ENV['LINE_WORKS_ACCESS_TOKEN']
+  end
 end
 
 post '/callback' do
   body = request.body.read
 
   signature = request.env['HTTP_X_WORKS_SIGNATURE']
-  unless client.validate_signature(body, signature)
-    error 400 do 'Bad Request' end
-  end
+  error 400 do 'Bad Request' end unless client.validate_signature(body, signature)
 
   bot_id = request.env['HTTP_X_WORKS_BOTID']
-  body = JSON.parse(body)
-  channel_id = body['source']['channelId']
-  user_id = body['source']['userId']
+  event = client.parse_event_from(body)
 
-  case body['type']
-  when 'message'
-    client.send_messages_to_channel(bot_id, channel_id, body['content']['text'])
+  case event
+  when Lineworks::Api::Event::Message
+    case event.type
+    when Lineworks::Api::Event::MessageType::Text
+      client.send_messages_to_channel(bot_id, event.channel_id, event.message['text'])
+    end
   end
 
   # Don't forget to return a successful response
-  "OK"
+  'OK'
 end
 ```

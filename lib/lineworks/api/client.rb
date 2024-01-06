@@ -87,6 +87,18 @@ module Lineworks
         end
       end
 
+      # Get an user's profile.
+      #
+      # @param user_id [String] User Id user_id
+      # @return [Net::HTTPResponse]
+      def get_profile(user_id)
+        channel_token_required
+
+        endpoint_path = "/users/#{user_id}"
+        get(endpoint, endpoint_path, credentials)
+      end
+
+
     end
   end
 end
