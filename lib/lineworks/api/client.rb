@@ -98,6 +98,20 @@ module Lineworks
         get(endpoint, endpoint_path, credentials)
       end
 
+      # Get an user's profile.
+      #
+      # @param user_id [String] User Id user_id
+      # @return [Net::HTTPResponse]
+      def get_profile_content(user_id)
+        response = get_profile(user_id)
+        case response.code
+        when '200'
+          JSON.parse(response.body, symbolize_names: true)
+        else
+          { error: 'error' }
+        end
+      end
+
 
     end
   end

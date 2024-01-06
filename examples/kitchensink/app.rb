@@ -127,13 +127,11 @@ def handle_message(bot_id, event)
   when Lineworks::Api::Event::MessageType::Text
     case event.message['text']
     when 'profile'
-      if event['source']['type'] == 'user'
-        profile = client.get_profile(event['source']['userId'])
-        profile = JSON.parse(profile.read_body)
-        reply_text(bot_id, event, [
-          "Display name\n#{profile['displayName']}",
-          "Status message\n#{profile['statusMessage']}"
-        ])
+      if event['source']['userId']
+        profile = client.get_profile_content(event['source']['userId'])
+        reply_text(bot_id, event, 
+          "User name\n#{profile[:userName][:lastName]} #{profile[:userName][:firstName]}"
+        )
       else
         reply_text(bot_id, event, "Bot can't use profile API without user ID")
       end
