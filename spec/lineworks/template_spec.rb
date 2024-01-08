@@ -108,7 +108,7 @@ describe Lineworks::Api::Message::Template do
     response = Lineworks::Api::Message::Template.button title, actions
 
     expected = {
-      type: 'button',
+      type: 'button_template',
       contentText: title,
       actions: actions
     }

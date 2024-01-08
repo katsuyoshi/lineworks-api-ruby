@@ -100,7 +100,7 @@ module Lineworks
           # @return [Hash]
           def button(title, actions)
             {
-              type: 'button',
+              type: 'button_template',
               contentText: title,
               actions: actions
             }

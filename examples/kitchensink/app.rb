@@ -10,6 +10,8 @@ QUICK_REPLY_ICON_URL = 'https://via.placeholder.com/64x64'
 
 set :app_base_url, ENV['APP_BASE_URL']
 
+include Lineworks::Api::Message
+
 def client
   @client ||= Lineworks::Api::Client.new do |config|
     config.channel_secret = ENV['LINE_WORKS_BOT_SECRET']
@@ -33,10 +35,12 @@ def broadcast(messages)
   client.broadcast(messages)
 end
 
-def reply_content(event, messages)
-  res = client.reply_message(
-    event['replyToken'],
-    messages
+def reply_content(bot_id, event, content)
+p content
+  res = client.send_messages_to_channel(
+    bot_id,
+    event.channel_id,
+    content
   )
   logger.warn res.read_body unless Net::HTTPOK === res
   res
@@ -123,7 +127,7 @@ def handle_message(bot_id, event)
   when Lineworks::Api::Event::MessageType::Sticker
     handle_sticker(event)
   when Lineworks::Api::Event::MessageType::Location
-    handle_location(event)
+    handle_location(bot_id, event)
   when Lineworks::Api::Event::MessageType::Text
     case event.message['text']
     when 'profile'
@@ -136,8 +140,10 @@ def handle_message(bot_id, event)
         reply_text(bot_id, event, "Bot can't use profile API without user ID")
       end
 
+=begin
+    # emoji is not supported.
     when 'emoji'
-      reply_content(event, {
+      reply_content(bot_id, event, {
         type: 'text',
         text: 'Look at this: $ It\'s a LINE emoji!',
         emojis: [
@@ -148,27 +154,24 @@ def handle_message(bot_id, event)
           }
         ]
       })
+=end
 
     when 'buttons'
-      reply_content(event, {
-        type: 'template',
-        altText: 'Buttons alt text',
-        template: {
-          type: 'buttons',
-          thumbnailImageUrl: THUMBNAIL_URL,
-          title: 'My button sample',
-          text: 'Hello, my button',
-          actions: [
-            { label: 'Go to line.me', type: 'uri', uri: 'https://line.me', altUri: {desktop: 'https://line.me#desktop'} },
-            { label: 'Send postback', type: 'postback', data: 'hello world' },
-            { label: 'Send postback2', type: 'postback', data: 'hello world', text: 'hello world' },
-            { label: 'Send message', type: 'message', text: 'This is message' }
-          ]
-        }
-      })
+      reply_content(bot_id, event, 
+        Template.button(
+          'My button sample',
+          [
+            Action.uri('Go to line-works.com', 'https://line-works.com'),
+            # postback is not allowed in button template
+            #Action.postback('Send postback', 'hello world'),
+            Action.message('Send message', 'This is message')
+          ].map(&:to_h)
+        )
+      )
 
+=begin # TODO: Fix to quick reply
     when 'confirm'
-      reply_content(event, {
+      reply_content(bot_id, event, {
         type: 'template',
         altText: 'Confirm alt text',
         template: {
@@ -180,9 +183,10 @@ def handle_message(bot_id, event)
           ],
         }
       })
+=end
 
     when 'carousel'
-      reply_content(event, {
+      reply_content(bot_id, event, {
         type: 'template',
         altText: 'Carousel alt text',
         template: {
@@ -192,7 +196,7 @@ def handle_message(bot_id, event)
               title: 'hoge',
               text: 'fuga',
               actions: [
-                { label: 'Go to line.me', type: 'uri', uri: 'https://line.me', altUri: {desktop: 'https://line.me#desktop'} },
+                { label: 'Go to line-works.com', type: 'uri', uri: 'https://line-works.com', altUri: {desktop: 'https://line-works.com#desktop'} },
                 { label: 'Send postback', type: 'postback', data: 'hello world' },
                 { label: 'Send message', type: 'message', text: 'This is message' }
               ]
@@ -235,7 +239,7 @@ def handle_message(bot_id, event)
       })
 
     when 'image carousel'
-      reply_content(event, {
+      reply_content(bot_id, event, {
         type: 'template',
         altText: 'Image carousel alt text',
         template: {
@@ -243,7 +247,7 @@ def handle_message(bot_id, event)
           columns: [
             {
               imageUrl: THUMBNAIL_URL,
-              action: { label: 'line.me', type: 'uri', uri: 'https://line.me', altUri: {desktop: 'https://line.me#desktop'} }
+              action: { label: 'line-works.com', type: 'uri', uri: 'https://line-works.com', altUri: {desktop: 'https://line-works.com#desktop'} }
             },
             {
               imageUrl: THUMBNAIL_URL,
@@ -270,7 +274,7 @@ def handle_message(bot_id, event)
       })
 
     when 'imagemap'
-      reply_content(event, {
+      reply_content(bot_id, event, {
         type: 'imagemap',
         baseUrl: THUMBNAIL_URL,
         altText: 'Imagemap alt text',
@@ -286,7 +290,7 @@ def handle_message(bot_id, event)
     when 'imagemap video'
       video_url = File.join(settings.app_base_url.to_s, 'imagemap/video.mp4')
       preview_url = File.join(settings.app_base_url.to_s, 'imagemap/preview.jpg')
-      reply_content(event, {
+      reply_content(bot_id, event, {
         type: 'imagemap',
         baseUrl: THUMBNAIL_URL,
         altText: 'Imagemap alt text',
@@ -314,7 +318,7 @@ def handle_message(bot_id, event)
       })
 
     when 'flex'
-      reply_content(event, {
+      reply_content(bot_id, event, {
         type: "flex",
         altText: "this is a flex message",
         contents: {
@@ -361,7 +365,7 @@ def handle_message(bot_id, event)
       })
 
     when 'flex carousel'
-      reply_content(event, {
+      reply_content(bot_id, event, {
         type: "flex",
         altText: "this is a flex carousel",
         contents: {
@@ -436,7 +440,7 @@ def handle_message(bot_id, event)
       })
 
     when 'quickreply'
-      reply_content(event, {
+      reply_content(bot_id, event, {
         type: 'text',
         text: '[QUICK REPLY]',
         quickReply: {
@@ -507,7 +511,7 @@ def handle_message(bot_id, event)
       })
 
     when 'flex1'
-      reply_content(event, {
+      reply_content(bot_id, event, {
         "type": "bubble",
         "size": "nano",
         "hero": {
@@ -607,12 +611,12 @@ def handle_sticker(bot_id, event)
       stickerId: event.message['stickerId']
     )
   end
-  reply_content(event, messages)
+  reply_content(bot_id, event, messages)
 end
 
-def handle_location(event)
+def handle_location(bot_id, event)
   message = event.message
-  reply_content(event, {
+  reply_content(bot_id, event, {
     type: 'location',
     title: message['title'] || message['address'],
     address: message['address'],
