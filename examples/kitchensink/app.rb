@@ -72,7 +72,7 @@ post '/callback' do
     logger.info "[LEAVE]\n#{body}"
 
   when Lineworks::Api::Event::Postback
-    message = "[POSTBACK]\n#{event['postback']['data']} (#{JSON.generate(event['postback']['params'])})"
+    message = "[POSTBACK]\n#{event.data} (#{JSON.generate(event.data)})"
     reply_text(bot_id, event, message)
 
 =begin
@@ -141,7 +141,7 @@ def handle_message(bot_id, event)
       end
 
 =begin
-    # emoji is not supported.
+    # CHECKME: emoji is not supported in LINE WORKS, right?
     when 'emoji'
       reply_content(bot_id, event, {
         type: 'text',
@@ -186,93 +186,59 @@ def handle_message(bot_id, event)
 =end
 
     when 'carousel'
-      reply_content(bot_id, event, {
-        type: 'template',
-        altText: 'Carousel alt text',
-        template: {
-          type: 'carousel',
-          columns: [
-            {
+      reply_content(bot_id, event, 
+        Template.carousel(
+          'rectangle',
+          'cover',
+          [
+            Template.carousel_column(
               title: 'hoge',
               text: 'fuga',
               actions: [
-                { label: 'Go to line-works.com', type: 'uri', uri: 'https://line-works.com', altUri: {desktop: 'https://line-works.com#desktop'} },
-                { label: 'Send postback', type: 'postback', data: 'hello world' },
-                { label: 'Send message', type: 'message', text: 'This is message' }
-              ]
-            },
-            {
-              title: 'Datetime Picker',
-              text: 'Please select a date, time or datetime',
-              actions: [
-                {
-                  type: 'datetimepicker',
-                  label: "Datetime",
-                  data: 'action=sel',
-                  mode: 'datetime',
-                  initial: '2017-06-18T06:15',
-                  max: '2100-12-31T23:59',
-                  min: '1900-01-01T00:00'
-                },
-                {
-                  type: 'datetimepicker',
-                  label: "Date",
-                  data: 'action=sel&only=date',
-                  mode: 'date',
-                  initial: '2017-06-18',
-                  max: '2100-12-31',
-                  min: '1900-01-01'
-                },
-                {
-                  type: 'datetimepicker',
-                  label: "Time",
-                  data: 'action=sel&only=time',
-                  mode: 'time',
-                  initial: '12:15',
-                  max: '23:00',
-                  min: '10:00'
-                }
-              ]
-            }
-          ]
-        }
-      })
+                Action.uri('Go to line-works.com', 'https://line-works.com'),
+                Action.postback('Send postback', 'hello world'),
+                Action.message('Send message', 'This is message')
+              ].map(&:to_h)
+            )
+            # CHECKME: Datetime picker is not supported in LINE WORKS, right?
+          ].map(&:to_h)
+        )
+      )
 
     when 'image carousel'
-      reply_content(bot_id, event, {
-        type: 'template',
-        altText: 'Image carousel alt text',
-        template: {
-          type: 'image_carousel',
-          columns: [
-            {
-              imageUrl: THUMBNAIL_URL,
-              action: { label: 'line-works.com', type: 'uri', uri: 'https://line-works.com', altUri: {desktop: 'https://line-works.com#desktop'} }
-            },
-            {
-              imageUrl: THUMBNAIL_URL,
-              action: { label: 'postback', type: 'postback', data: 'hello world' }
-            },
-            {
-              imageUrl: THUMBNAIL_URL,
-              action: { label: 'message', type: 'message', text: 'This is message' }
-            },
-            {
-              imageUrl: THUMBNAIL_URL,
-              action: {
-                type: 'datetimepicker',
-                label: "Datetime",
-                data: 'action=sel',
-                mode: 'datetime',
-                initial: '2017-06-18T06:15',
-                max: '2100-12-31T23:59',
-                min: '1900-01-01T00:00'
-              }
-            }
-          ]
-        }
-      })
+      reply_content(bot_id, event, 
+        Template.carousel(
+          'rectangle',
+          'cover',
+          [
+            Template.carousel_column(
+              text: 'Action 1',
+              original_content_url: THUMBNAIL_URL,
+              actions: [
+                Action.uri('Go to line-works.com', 'https://line-works.com')
+              ].map(&:to_h)
+            ),
+            Template.carousel_column(
+              text: 'Action 2',
+              original_content_url: THUMBNAIL_URL,
+              actions: [
+                Action.postback('Send postback', 'hello world')
+              ].map(&:to_h)
+            ),
+            Template.carousel_column(
+              text: 'Action 3',
+              original_content_url: THUMBNAIL_URL,
+              actions: [
+                Action.message('Send message', 'This is message')
+              ].map(&:to_h)
+            )
+            # CHECKME: Datetime picker is not supported in line-works, right?
+          ].map(&:to_h)
+        )
+      )
 
+=begin
+    # CHECKME: imagemap is not supported in LINEWORKS, right?
     when 'imagemap'
       reply_content(bot_id, event, {
         type: 'imagemap',
@@ -286,7 +252,10 @@ def handle_message(bot_id, event)
           { area: { x: 512, y: 512, width: 512, height: 512 }, type: 'message', text: 'Fortune!' },
         ]
       })
+=end
 
+=begin
+    # CHECKME: imagemap is not supported in LINEWORKS, right?
     when 'imagemap video'
       video_url = File.join(settings.app_base_url.to_s, 'imagemap/video.mp4')
       preview_url = File.join(settings.app_base_url.to_s, 'imagemap/preview.jpg')
@@ -316,6 +285,7 @@ def handle_message(bot_id, event)
           { area: { x: 512, y: 512, width: 512, height: 512 }, type: 'message', text: 'Fortune!' },
         ]
       })
+=end
 
     when 'flex'
       reply_content(bot_id, event, {
