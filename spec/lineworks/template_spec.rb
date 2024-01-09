@@ -190,4 +190,33 @@ describe Lineworks::Api::Message::Template do
     }
     expect(response).to eq(expected)
   end
+
+  it 'get the quick response item' do
+    image_url = 'https://example.com/image_preview.png'
+    action = Lineworks::Api::Message::Action.postback('label', 'data')
+    item = Lineworks::Api::Message::QuickReplyTemplate::QuickReplyItem.new( image_url, action)
+
+    expected = {
+      imageUrl: image_url,
+      action: action.to_h
+    }
+    expect(item.to_h).to eq(expected)
+  end
+
+  it 'get the quick response' do
+    image_url = 'https://example.com/image_preview.png'
+    action = Lineworks::Api::Message::Action.postback('label', 'data')
+    item = Lineworks::Api::Message::QuickReplyTemplate::QuickReplyItem.new( image_url, action)
+    response = Lineworks::Api::Message::QuickReplyTemplate.new(
+      'text',
+      [item]
+    ).to_h
+
+    expected = {
+      text: 'text',
+      items: [item.to_h]
+    }
+    expect(response.to_h).to eq(expected)
+  end
+
 end

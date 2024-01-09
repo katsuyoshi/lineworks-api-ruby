@@ -105,6 +105,7 @@ def handle_message(bot_id, event)
     tf.write(response.body)
     reply_text(bot_id, event, "[MessageType::IMAGE]\nid:#{message_id}\nreceived #{tf.size} bytes data")
 =begin
+  # CHECKME: Video is not supported in LINEWORKS, right?
   when Lineworks::Api::Event::MessageType::Video
     message_id = event.message['id']
     response = client.get_message_content(message_id)
@@ -169,7 +170,8 @@ def handle_message(bot_id, event)
         )
       )
 
-=begin # TODO: Fix to quick reply
+=begin
+    # CHECKME: confirm is not supported in LINEWORKS, right?
     when 'confirm'
       reply_content(bot_id, event, {
         type: 'template',
@@ -288,196 +290,162 @@ def handle_message(bot_id, event)
 =end
 
     when 'flex'
-      reply_content(bot_id, event, {
-        type: "flex",
-        altText: "this is a flex message",
-        contents: {
-          type: "bubble",
-          header: {
-            type: "box",
-            layout: "vertical",
+      reply_content(bot_id, event,
+        Template.flexible(
+          'this is a flex message',
+          {
+            type: "bubble",
+            header: {
+              type: "box",
+              layout: "vertical",
+              contents: [
+                {
+                  type: "text",
+                  text: "Header text"
+                }
+              ]
+            },
+            hero: {
+              type: "image",
+              url: HORIZONTAL_THUMBNAIL_URL,
+              size: "full",
+              aspectRatio: "4:3"
+            },
+            body: {
+              type: "box",
+              layout: "vertical",
+              contents: [
+                {
+                  type: "text",
+                  text: "Body text",
+                }
+              ]
+            },
+            footer: {
+              type: "box",
+              layout: "vertical",
+              contents: [
+                {
+                  type: "text",
+                  text: "Footer text",
+                  align: "center",
+                  color: "#888888"
+                }
+              ]
+            }
+          }
+        )
+      )
+
+    when 'flex carousel'
+      reply_content(bot_id, event,
+        Template.flexible(
+          "this is a flex carousel",
+          {
+            type: "carousel",
             contents: [
               {
-                type: "text",
-                text: "Header text"
-              }
-            ]
-          },
-          hero: {
-            type: "image",
-            url: HORIZONTAL_THUMBNAIL_URL,
-            size: "full",
-            aspectRatio: "4:3"
-          },
-          body: {
-            type: "box",
-            layout: "vertical",
-            contents: [
+                type: "bubble",
+                body: {
+                  type: "box",
+                  layout: "horizontal",
+                  contents: [
+                    {
+                      type: "text",
+                      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                      wrap: true
+                    }
+                  ]
+                },
+                footer: {
+                  type: "box",
+                  layout: "horizontal",
+                  contents: [
+                    {
+                      type: "button",
+                      style: "primary",
+                      action: {
+                        type: "uri",
+                        label: "Go",
+                        uri: "https://example.com",
+                        altUri: {
+                          desktop: "https://example.com#desktop"
+                        },
+                      }
+                    }
+                  ]
+                }
+              },
               {
-                type: "text",
-                text: "Body text",
-              }
-            ]
-          },
-          footer: {
-            type: "box",
-            layout: "vertical",
-            contents: [
-              {
-                type: "text",
-                text: "Footer text",
-                align: "center",
-                color: "#888888"
+                type: "bubble",
+                body: {
+                  type: "box",
+                  layout: "horizontal",
+                  contents: [
+                    {
+                      type: "text",
+                      text: "Hello, World!",
+                      wrap: true
+                    }
+                  ]
+                },
+                footer: {
+                  type: "box",
+                  layout: "horizontal",
+                  contents: [
+                    {
+                      type: "button",
+                      style: "primary",
+                      action: {
+                        type: "uri",
+                        label: "Go",
+                        uri: "https://example.com",
+                        altUri: {
+                          desktop: "https://example.com#desktop"
+                        }
+                      }
+                    }
+                  ]
+                }
               }
             ]
           }
-        }
-      })
-
-    when 'flex carousel'
-      reply_content(bot_id, event, {
-        type: "flex",
-        altText: "this is a flex carousel",
-        contents: {
-          type: "carousel",
-          contents: [
-            {
-              type: "bubble",
-              body: {
-                type: "box",
-                layout: "horizontal",
-                contents: [
-                  {
-                    type: "text",
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    wrap: true
-                  }
-                ]
-              },
-              footer: {
-                type: "box",
-                layout: "horizontal",
-                contents: [
-                  {
-                    type: "button",
-                    style: "primary",
-                    action: {
-                      type: "uri",
-                      label: "Go",
-                      uri: "https://example.com",
-                      altUri: {
-                        desktop: "https://example.com#desktop"
-                      },
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              type: "bubble",
-              body: {
-                type: "box",
-                layout: "horizontal",
-                contents: [
-                  {
-                    type: "text",
-                    text: "Hello, World!",
-                    wrap: true
-                  }
-                ]
-              },
-              footer: {
-                type: "box",
-                layout: "horizontal",
-                contents: [
-                  {
-                    type: "button",
-                    style: "primary",
-                    action: {
-                      type: "uri",
-                      label: "Go",
-                      uri: "https://example.com",
-                      altUri: {
-                        desktop: "https://example.com#desktop"
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      })
+        )
+      )
 
     when 'quickreply'
       reply_content(bot_id, event, {
         type: 'text',
         text: '[QUICK REPLY]',
-        quickReply: {
-          items: [
-            {
-              type: "action",
-              imageUrl: QUICK_REPLY_ICON_URL,
-              action: {
-                type: "message",
-                label: "Sushi",
-                text: "Sushi"
-              }
-            },
-            {
-              type: "action",
-              action: {
-                type: "location",
-                label: "Send location"
-              }
-            },
-            {
-              type: "action",
-              imageUrl: QUICK_REPLY_ICON_URL,
-              action: {
-                type: "camera",
-                label: "Open camera",
-              }
-            },
-            {
-              type: "action",
-              imageUrl: QUICK_REPLY_ICON_URL,
-              action: {
-                type: "cameraRoll",
-                label: "Open cameraRoll",
-              }
-            },
-            {
-              type: "action",
-              action: {
-                type: "postback",
-                label: "buy",
-                data: "action=buy&itemid=111",
-                text: "buy",
-              }
-            },
-            {
-              type: "action",
-              action: {
-                type: "message",
-                label: "Yes",
-                text: "Yes"
-              }
-            },
-            {
-              type: "action",
-              action: {
-                type: "datetimepicker",
-                label: "Select date",
-                data: "storeId=12345",
-                mode: "datetime",
-                initial: "2017-12-25t00:00",
-                max: "2018-01-24t23:59",
-                min: "2017-12-25t00:00"
-              }
-            },
-          ],
-        },
+        quickReply: QuickReplyTemplate.new(
+          'action',
+          [
+            QuickReplyTemplate::QuickReplyItem.new(
+              QUICK_REPLY_ICON_URL,
+              Action.message('Sushi', 'Sushi')
+            ),
+            QuickReplyTemplate::QuickReplyItem.new(
+              nil,
+              Action.location('Send location')
+            ),
+            QuickReplyTemplate::QuickReplyItem.new(
+              QUICK_REPLY_ICON_URL,
+              Action.camera('Open camera')
+            ),
+            QuickReplyTemplate::QuickReplyItem.new(
+              QUICK_REPLY_ICON_URL,
+              Action.camera_roll('Open cameraRoll')
+            ),
+            QuickReplyTemplate::QuickReplyItem.new(
+              QUICK_REPLY_ICON_URL,
+              Action.postback('buy', 'action=buy&itemid=111', 'buy')
+            ),
+            QuickReplyTemplate::QuickReplyItem.new(
+              QUICK_REPLY_ICON_URL,
+              Action.message('Yes', 'Yes')
+            )
+          ]
+        ).to_h
       })
 
     when 'flex1'

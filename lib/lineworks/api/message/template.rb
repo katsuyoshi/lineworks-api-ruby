@@ -314,6 +314,40 @@ module Lineworks
           end
         end
       end
+
+      # Get quick reply object.
+      class QuickReplyTemplate
+        attr_accessor :text, :items
+        def initialize text, items
+          @text = text
+          @items = items || []
+        end
+
+        def to_h
+          {
+            text: @text,
+            items: @items.map(&:to_h)
+          }.compact
+        end
+
+        # Get quick reply item object.
+        class QuickReplyItem
+          attr_accessor :image_url, :action
+          def initialize image_url, action
+            @image_url = image_url
+            @action = action
+          end
+
+          def to_h
+            {
+              imageUrl: @image_url,
+              action: @action.to_h
+            }.compact
+          end
+        end
+
+      end
+
     end
   end
 end
