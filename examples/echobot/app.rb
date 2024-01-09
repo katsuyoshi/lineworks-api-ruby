@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require 'sinatra'       # gem 'sinatra'
-require 'lineworks-api' # gem 'lineworks-api'
+require 'lineworks' # gem 'lineworks'
 require 'dotenv'        # gem 'dotenv'
 
 Dotenv.load
 
 def client
-  @client ||= Lineworks::Api::Client.new do |config|
+  @client ||= Lineworks::Bot::Client.new do |config|
     config.channel_secret = ENV['LINE_WORKS_BOT_SECRET']
     config.channel_token = ENV['LINE_WORKS_ACCESS_TOKEN']
   end
@@ -23,9 +23,9 @@ post '/callback' do
   event = client.parse_event_from(body)
 
   case event
-  when Lineworks::Api::Event::Message
+  when Lineworks::Bot::Event::Message
     case event.type
-    when Lineworks::Api::Event::MessageType::Text
+    when Lineworks::Bot::Event::MessageType::Text
       client.send_messages_to_channel(bot_id, event.channel_id, event.message['text'])
     end
   end

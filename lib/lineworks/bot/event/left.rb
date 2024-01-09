@@ -1,5 +1,5 @@
 module Lineworks
-  module Api
+  module Bot
     module Event
       # Event object for when your LINE WORKS official account is blocked.
       #

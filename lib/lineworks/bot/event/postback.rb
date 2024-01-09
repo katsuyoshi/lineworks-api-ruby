@@ -1,5 +1,5 @@
 module Lineworks
-  module Api
+  module Bot
     module Event
       # Event object for when a user performs a postback action which initiates a postback.
       #

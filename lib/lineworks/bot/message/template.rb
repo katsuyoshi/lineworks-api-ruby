@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Lineworks
-  module Api
+  module Bot
     module Message
       # @see: https://developers.worksmobile.com/jp/docs/bot-channel-message-send
       class Template

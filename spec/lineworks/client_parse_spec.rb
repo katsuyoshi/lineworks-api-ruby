@@ -170,7 +170,7 @@ EOS
 
 
 
-describe Lineworks::Api::Client do
+describe Lineworks::Bot::Client do
   def dummy_config
     {
       channel_token: 'access token',
@@ -178,7 +178,7 @@ describe Lineworks::Api::Client do
   end
 
   def generate_client
-    client = Lineworks::Api::Client.new do |config|
+    client = Lineworks::Bot::Client.new do |config|
       config.channel_token = dummy_config[:channel_token]
     end
 
@@ -193,8 +193,8 @@ describe Lineworks::Api::Client do
       'type' => "text",
       'text' => "hello"
     }
-    expect(event).to be_a(Lineworks::Api::Event::Message)
-    expect(event.type).to eq(Lineworks::Api::Event::MessageType::Text)
+    expect(event).to be_a(Lineworks::Bot::Event::Message)
+    expect(event.type).to eq(Lineworks::Bot::Event::MessageType::Text)
     expect(event.message).to eq message
 
   end
@@ -209,8 +209,8 @@ describe Lineworks::Api::Client do
       "latitude" => 35.6587750,
       "longitude" => 139.7052230
     }
-    expect(event).to be_a(Lineworks::Api::Event::Message)
-    expect(event.type).to eq(Lineworks::Api::Event::MessageType::Location)
+    expect(event).to be_a(Lineworks::Bot::Event::Message)
+    expect(event.type).to eq(Lineworks::Bot::Event::MessageType::Location)
     expect(event.message).to eq message
 
   end
@@ -224,8 +224,8 @@ describe Lineworks::Api::Client do
       "packageId" => "1",
       "stickerId" => "1"
     }
-    expect(event).to be_a(Lineworks::Api::Event::Message)
-    expect(event.type).to eq(Lineworks::Api::Event::MessageType::Sticker)
+    expect(event).to be_a(Lineworks::Bot::Event::Message)
+    expect(event.type).to eq(Lineworks::Bot::Event::MessageType::Sticker)
     expect(event.message).to eq message
 
   end
@@ -238,8 +238,8 @@ describe Lineworks::Api::Client do
       "type" => "image",
       "fileId" => "WAAAQPwBexX2HnseNvvM9Zyhvp2kIRF3Ul7L7/aMVti8="
     }
-    expect(event).to be_a(Lineworks::Api::Event::Message)
-    expect(event.type).to eq(Lineworks::Api::Event::MessageType::Image)
+    expect(event).to be_a(Lineworks::Bot::Event::Message)
+    expect(event.type).to eq(Lineworks::Bot::Event::MessageType::Image)
     expect(event.message).to eq message
   end
 
@@ -251,8 +251,8 @@ describe Lineworks::Api::Client do
       "type" => "file",
       "fileId" => "WAAAQPwBexX2HnseNvvM9Zyhvp2kIRF3Ul7L7/aMVti8="
     }
-    expect(event).to be_a(Lineworks::Api::Event::Message)
-    expect(event.type).to eq(Lineworks::Api::Event::MessageType::File)
+    expect(event).to be_a(Lineworks::Bot::Event::Message)
+    expect(event.type).to eq(Lineworks::Bot::Event::MessageType::File)
     expect(event.message).to eq message
   end
 
@@ -260,7 +260,7 @@ describe Lineworks::Api::Client do
     client = generate_client
     event = client.parse_event_from(POSTBACK_EVENT_CONTENT)
 
-    expect(event).to be_a(Lineworks::Api::Event::Postback)
+    expect(event).to be_a(Lineworks::Bot::Event::Postback)
     expect(event.data).to eq('action=buy')
   end
 
@@ -268,7 +268,7 @@ describe Lineworks::Api::Client do
     client = generate_client
     event = client.parse_event_from(JOIN_EVENT_CONTENT)
 
-    expect(event).to be_a(Lineworks::Api::Event::Join)
+    expect(event).to be_a(Lineworks::Bot::Event::Join)
     expect(event.channel_id).to eq('12345')
     expect(event.domain_id).to eq(40029600)
     expect(event.issued_at).to eq(Time.iso8601('2022-01-04T05:16:05Z'))
@@ -278,7 +278,7 @@ describe Lineworks::Api::Client do
     client = generate_client
     event = client.parse_event_from(LEAVE_EVENT_CONTENT)
 
-    expect(event).to be_a(Lineworks::Api::Event::Leave)
+    expect(event).to be_a(Lineworks::Bot::Event::Leave)
     expect(event.channel_id).to eq('12345')
     expect(event.domain_id).to eq(40029600)
     expect(event.issued_at).to eq(Time.iso8601('2022-01-04T05:16:05.716Z'))
@@ -288,7 +288,7 @@ describe Lineworks::Api::Client do
     client = generate_client
     event = client.parse_event_from(JOINED_EVENT_CONTENT)
 
-    expect(event).to be_a(Lineworks::Api::Event::Joined)
+    expect(event).to be_a(Lineworks::Bot::Event::Joined)
     expect(event.channel_id).to eq('12345')
     expect(event.domain_id).to eq(40029600)
     expect(event.issued_at).to eq(Time.iso8601('2022-01-04T05:16:05.716Z'))
@@ -299,7 +299,7 @@ describe Lineworks::Api::Client do
     client = generate_client
     event = client.parse_event_from(LEFT_EVENT_CONTENT)
 
-    expect(event).to be_a(Lineworks::Api::Event::Left)
+    expect(event).to be_a(Lineworks::Bot::Event::Left)
     expect(event.channel_id).to eq('12345')
     expect(event.domain_id).to eq(40029600)
     expect(event.issued_at).to eq(Time.iso8601('2022-01-04T05:16:05.716Z'))
@@ -310,15 +310,15 @@ describe Lineworks::Api::Client do
     client = generate_client
     event = client.parse_event_from(UNKNOWN_EVENT_CONTENT)
 
-    expect(event).to be_a(Lineworks::Api::Event::Base)
+    expect(event).to be_a(Lineworks::Bot::Event::Base)
   end
 
   it 'parses unsupport message event' do
     client = generate_client
     event = client.parse_event_from(UNSUPPORT_MESSAGE_EVENT_CONTENT)
 
-    expect(event).to be_a(Lineworks::Api::Event::Message)
-    expect(event.type).to eq(Lineworks::Api::Event::MessageType::Unsupport)
+    expect(event).to be_a(Lineworks::Bot::Event::Message)
+    expect(event.type).to eq(Lineworks::Bot::Event::MessageType::Unsupport)
   end
 
 

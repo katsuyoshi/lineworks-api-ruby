@@ -2,12 +2,12 @@ require 'spec_helper'
 require 'webmock/rspec'
 require 'json'
 
-describe Lineworks::Api::Client do
+describe Lineworks::Bot::Client do
   it 'send the text message to the channel' do
-    uri_template = Addressable::Template.new Lineworks::Api::DEFAULT_ENDPOINT + '/bots/bot_id/channels/channel_id/messages'
+    uri_template = Addressable::Template.new Lineworks::Bot::DEFAULT_ENDPOINT + '/bots/bot_id/channels/channel_id/messages'
     stub_request(:post, uri_template).to_return { |request| { body: request.body, status: 200 } }
 
-    client = Lineworks::Api::Client.new do |config|
+    client = Lineworks::Bot::Client.new do |config|
       config.channel_token = 'channel_token'
     end
 
@@ -26,10 +26,10 @@ describe Lineworks::Api::Client do
   end
 
   it 'send the text message in a hash to the channel' do
-    uri_template = Addressable::Template.new Lineworks::Api::DEFAULT_ENDPOINT + '/bots/bot_id/channels/channel_id/messages'
+    uri_template = Addressable::Template.new Lineworks::Bot::DEFAULT_ENDPOINT + '/bots/bot_id/channels/channel_id/messages'
     stub_request(:post, uri_template).to_return { |request| { body: request.body, status: 200 } }
 
-    client = Lineworks::Api::Client.new do |config|
+    client = Lineworks::Bot::Client.new do |config|
       config.channel_token = 'channel_token'
     end
 
@@ -48,10 +48,10 @@ describe Lineworks::Api::Client do
   end
 
   it 'send the text message to the user' do
-    uri_template = Addressable::Template.new Lineworks::Api::DEFAULT_ENDPOINT + '/bots/bot_id/users/user_id/messages'
+    uri_template = Addressable::Template.new Lineworks::Bot::DEFAULT_ENDPOINT + '/bots/bot_id/users/user_id/messages'
     stub_request(:post, uri_template).to_return { |request| { body: request.body, status: 200 } }
 
-    client = Lineworks::Api::Client.new do |config|
+    client = Lineworks::Bot::Client.new do |config|
       config.channel_token = 'channel_token'
     end
 
@@ -70,10 +70,10 @@ describe Lineworks::Api::Client do
   end
 
   it 'send the text message in a hash to the user' do
-    uri_template = Addressable::Template.new Lineworks::Api::DEFAULT_ENDPOINT + '/bots/bot_id/users/user_id/messages'
+    uri_template = Addressable::Template.new Lineworks::Bot::DEFAULT_ENDPOINT + '/bots/bot_id/users/user_id/messages'
     stub_request(:post, uri_template).to_return { |request| { body: request.body, status: 200 } }
 
-    client = Lineworks::Api::Client.new do |config|
+    client = Lineworks::Bot::Client.new do |config|
       config.channel_token = 'channel_token'
     end
 

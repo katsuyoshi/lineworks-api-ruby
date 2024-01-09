@@ -2,12 +2,12 @@ require 'spec_helper'
 require 'webmock/rspec'
 require 'json'
 
-describe Lineworks::Api::Message::Action do
+describe Lineworks::Bot::Message::Action do
   it 'get the postback action' do
     label = 'label'
     data = 'data'
     text = 'text'
-    response = Lineworks::Api::Message::Action.postback label, data, text
+    response = Lineworks::Bot::Message::Action.postback label, data, text
 
     expected = {
       type: 'postback',
@@ -22,7 +22,7 @@ describe Lineworks::Api::Message::Action do
     label = 'label'
     text = 'text'
     postback = 'postback'
-    response = Lineworks::Api::Message::Action.message label, text, postback
+    response = Lineworks::Bot::Message::Action.message label, text, postback
 
     expected = {
       type: 'message',
@@ -36,7 +36,7 @@ describe Lineworks::Api::Message::Action do
   it 'get the uri action' do
     label = 'label'
     uri = 'uri'
-    response = Lineworks::Api::Message::Action.uri label, uri
+    response = Lineworks::Bot::Message::Action.uri label, uri
 
     expected = {
       type: 'uri',
@@ -48,7 +48,7 @@ describe Lineworks::Api::Message::Action do
 
   it 'get the camera action' do
     label = 'label'
-    response = Lineworks::Api::Message::Action.camera label
+    response = Lineworks::Bot::Message::Action.camera label
 
     expected = {
       type: 'camera',
@@ -59,7 +59,7 @@ describe Lineworks::Api::Message::Action do
 
   it 'get the camera roll action' do
     label = 'label'
-    response = Lineworks::Api::Message::Action.camera_roll label
+    response = Lineworks::Bot::Message::Action.camera_roll label
 
     expected = {
       type: 'cameraRoll',
@@ -70,7 +70,7 @@ describe Lineworks::Api::Message::Action do
 
   it 'get the location action' do
     label = 'label'
-    response = Lineworks::Api::Message::Action.location label
+    response = Lineworks::Bot::Message::Action.location label
 
     expected = {
       type: 'location',
@@ -82,7 +82,7 @@ describe Lineworks::Api::Message::Action do
   it 'get the copy action' do
     label = 'label'
     copy = 'copy'
-    response = Lineworks::Api::Message::Action.copy label, copy
+    response = Lineworks::Bot::Message::Action.copy label, copy
 
     expected = {
       type: 'copy',

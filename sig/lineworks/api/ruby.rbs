@@ -1,5 +1,5 @@
 module Lineworks
-  module Api
+  module Bot
     module Ruby
       VERSION: String
       # See the writing guide of rbs: https://github.com/ruby/rbs#guides

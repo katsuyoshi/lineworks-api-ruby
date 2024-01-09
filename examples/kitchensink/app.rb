@@ -1,5 +1,5 @@
 require 'sinatra'   # gem 'sinatra'
-require 'lineworks-api'  # gem 'line-bot-api'
+require 'lineworks'  # gem 'line-bot-api'
 require 'dotenv'        # gem 'dotenv'
 
 Dotenv.load
@@ -10,10 +10,10 @@ QUICK_REPLY_ICON_URL = 'https://via.placeholder.com/64x64'
 
 set :app_base_url, ENV['APP_BASE_URL']
 
-include Lineworks::Api::Message
+include Lineworks::Bot::Message
 
 def client
-  @client ||= Lineworks::Api::Client.new do |config|
+  @client ||= Lineworks::Bot::Client.new do |config|
     config.channel_secret = ENV['LINE_WORKS_BOT_SECRET']
     config.channel_token = ENV['LINE_WORKS_ACCESS_TOKEN']
     config.http_options = {
@@ -56,36 +56,36 @@ post '/callback' do
   event = client.parse_event_from(body)
 
   case event
-  when Lineworks::Api::Event::Message
+  when Lineworks::Bot::Event::Message
     handle_message(bot_id, event)
 
-  when Lineworks::Api::Event::Joined
+  when Lineworks::Bot::Event::Joined
     reply_text(bot_id, event, "[JOINED]\nThank you for joined")
 
-  when Lineworks::Api::Event::Left
+  when Lineworks::Bot::Event::Left
     logger.info "[LEFT]\n#{body}"
 
-  when Lineworks::Api::Event::Join
+  when Lineworks::Bot::Event::Join
     reply_text(bot_id, event, "[JOIN]\n#{event['source']['type']}")
 
-  when Lineworks::Api::Event::Leave
+  when Lineworks::Bot::Event::Leave
     logger.info "[LEAVE]\n#{body}"
 
-  when Lineworks::Api::Event::Postback
+  when Lineworks::Bot::Event::Postback
     message = "[POSTBACK]\n#{event.data} (#{JSON.generate(event.data)})"
     reply_text(bot_id, event, message)
 
 =begin
-  when Lineworks::Api::Event::Beacon
+  when Lineworks::Bot::Event::Beacon
     reply_text(bot_id, event, "[BEACON]\n#{JSON.generate(event['beacon'])}")
 
-  when Lineworks::Api::Event::Things
+  when Lineworks::Bot::Event::Things
     reply_text(bot_id, event, "[THINGS]\n#{JSON.generate(event['things'])}")
 
-  when Lineworks::Api::Event::VideoPlayComplete
+  when Lineworks::Bot::Event::VideoPlayComplete
     reply_text(bot_id, event, "[VIDEOPLAYCOMPLETE]\n#{JSON.generate(event['videoPlayComplete'])}")
 
-  when Lineworks::Api::Event::Unsend
+  when Lineworks::Bot::Event::Unsend
     handle_unsend(bot_id, event)
 =end
 
@@ -98,7 +98,7 @@ end
 
 def handle_message(bot_id, event)
   case event.type
-  when Lineworks::Api::Event::MessageType::Image
+  when Lineworks::Bot::Event::MessageType::Image
     message_id = event.message['id']
     response = client.get_message_content(message_id)
     tf = Tempfile.open("content")
@@ -106,30 +106,30 @@ def handle_message(bot_id, event)
     reply_text(bot_id, event, "[MessageType::IMAGE]\nid:#{message_id}\nreceived #{tf.size} bytes data")
 =begin
   # CHECKME: Video is not supported in LINEWORKS, right?
-  when Lineworks::Api::Event::MessageType::Video
+  when Lineworks::Bot::Event::MessageType::Video
     message_id = event.message['id']
     response = client.get_message_content(message_id)
     tf = Tempfile.open("content")
     tf.write(response.body)
     reply_text(bot_id, event, "[MessageType::VIDEO]\nid:#{message_id}\nreceived #{tf.size} bytes data")
-  when Lineworks::Api::Event::MessageType::Audio
+  when Lineworks::Bot::Event::MessageType::Audio
     message_id = event.message['id']
     response = client.get_message_content(message_id)
     tf = Tempfile.open("content")
     tf.write(response.body)
     reply_text(bot_id, event, "[MessageType::AUDIO]\nid:#{message_id}\nreceived #{tf.size} bytes data")
 =end
-  when Lineworks::Api::Event::MessageType::File
+  when Lineworks::Bot::Event::MessageType::File
     message_id = event.message['id']
     response = client.get_message_content(message_id)
     tf = Tempfile.open("content")
     tf.write(response.body)
     reply_text(bot_id, event, "[MessageType::FILE]\nid:#{message_id}\nfileName:#{event.message['fileName']}\nfileSize:#{event.message['fileSize']}\nreceived #{tf.size} bytes data")
-  when Lineworks::Api::Event::MessageType::Sticker
+  when Lineworks::Bot::Event::MessageType::Sticker
     handle_sticker(event)
-  when Lineworks::Api::Event::MessageType::Location
+  when Lineworks::Bot::Event::MessageType::Location
     handle_location(bot_id, event)
-  when Lineworks::Api::Event::MessageType::Text
+  when Lineworks::Bot::Event::MessageType::Text
     case event.message['text']
     when 'profile'
       if event['source']['userId']

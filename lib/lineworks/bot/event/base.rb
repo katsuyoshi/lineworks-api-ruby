@@ -1,5 +1,5 @@
 module Lineworks
-  module Api
+  module Bot
     module Event
       class Base
         def initialize(src)

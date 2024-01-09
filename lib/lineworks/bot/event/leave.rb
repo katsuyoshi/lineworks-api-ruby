@@ -1,5 +1,5 @@
 module Lineworks
-  module Api
+  module Bot
     module Event
       # Event object for when a user removes your LINE WORKS official account from a group or when your LINE WORKS official account leaves a group or room.
       #

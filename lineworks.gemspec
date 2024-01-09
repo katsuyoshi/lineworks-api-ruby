@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative 'lib/lineworks/api/version'
+require_relative 'lib/lineworks/bot/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'lineworks-api'
-  spec.version = Lineworks::Api::VERSION
+  spec.name = 'lineworks'
+  spec.version = Lineworks::Bot::VERSION
   spec.authors = ['Katsuyoshi Ito']
   spec.email = ['kito@itosoft.com']
 
   spec.summary = 'This gem is to use access to LINE WORKS API from Ruby.'
   spec.description = 'This gem is to use access to LINE WORKS API from Ruby.'
-  spec.homepage = 'https://github.com/katsuyoshi/lineworks-api-ruby'
+  spec.homepage = 'https://github.com/katsuyoshi/lineworks-ruby'
   spec.license = 'Apache-2.0'
   spec.required_ruby_version = '>= 2.6.0'
 

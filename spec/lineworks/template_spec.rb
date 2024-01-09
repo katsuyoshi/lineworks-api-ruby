@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'webmock/rspec'
 require 'json'
 
-describe Lineworks::Api::Message::Template do
+describe Lineworks::Bot::Message::Template do
   it 'get the text message' do
     message = 'Hello, world'
-    response = Lineworks::Api::Message::Template.text message
+    response = Lineworks::Bot::Message::Template.text message
 
     expected = {
       type: 'text',
@@ -17,7 +17,7 @@ describe Lineworks::Api::Message::Template do
   it 'get the stamp message' do
     package_id = 1
     sticker_id = 2
-    response = Lineworks::Api::Message::Template.stamp package_id, sticker_id
+    response = Lineworks::Bot::Message::Template.stamp package_id, sticker_id
 
     expected = {
       type: 'sticker',
@@ -30,7 +30,7 @@ describe Lineworks::Api::Message::Template do
   it 'get the image message with urls' do
     preview_url = 'https://example.com/image_preview.png'
     original_url = 'https://example.com/image.png'
-    response = Lineworks::Api::Message::Template.image original_url, preview_url
+    response = Lineworks::Bot::Message::Template.image original_url, preview_url
 
     expected = {
       type: 'image',
@@ -42,7 +42,7 @@ describe Lineworks::Api::Message::Template do
 
   it 'get the image message with only original url' do
     original_url = 'https://example.com/image.png'
-    response = Lineworks::Api::Message::Template.image original_url
+    response = Lineworks::Bot::Message::Template.image original_url
 
     expected = {
       type: 'image',
@@ -54,7 +54,7 @@ describe Lineworks::Api::Message::Template do
 
   it 'get the image message with file id' do
     file_id = 'image_id'
-    response = Lineworks::Api::Message::Template.image_with_file file_id
+    response = Lineworks::Bot::Message::Template.image_with_file file_id
 
     expected = {
       type: 'image',
@@ -65,7 +65,7 @@ describe Lineworks::Api::Message::Template do
 
   it 'get the file message with url' do
     file_url = 'https://example.com/file.pdf'
-    response = Lineworks::Api::Message::Template.file file_url
+    response = Lineworks::Bot::Message::Template.file file_url
 
     expected = {
       type: 'file',
@@ -76,7 +76,7 @@ describe Lineworks::Api::Message::Template do
 
   it 'get the file message with file id' do
     file_id = 'file_id'
-    response = Lineworks::Api::Message::Template.file_with_id file_id
+    response = Lineworks::Bot::Message::Template.file_with_id file_id
 
     expected = {
       type: 'file',
@@ -89,7 +89,7 @@ describe Lineworks::Api::Message::Template do
     content = 'content'
     link = 'link'
     url = 'https://example.com'
-    response = Lineworks::Api::Message::Template.link content, link, url
+    response = Lineworks::Bot::Message::Template.link content, link, url
 
     expected = {
       type: 'link',
@@ -103,9 +103,9 @@ describe Lineworks::Api::Message::Template do
   it 'get the button message' do
     title = 'title'
     actions = [
-      Lineworks::Api::Message::Action.postback('label', 'data')
+      Lineworks::Bot::Message::Action.postback('label', 'data')
     ]
-    response = Lineworks::Api::Message::Template.button title, actions
+    response = Lineworks::Bot::Message::Template.button title, actions
 
     expected = {
       type: 'button_template',
@@ -117,23 +117,23 @@ describe Lineworks::Api::Message::Template do
 
   it 'get the list message' do
     header = 'header'
-    cover = Lineworks::Api::Message::Template.list_cover(title: 'title', sub_title: 'sub_title', image_url: 'https://example.com/sample.png')
+    cover = Lineworks::Bot::Message::Template.list_cover(title: 'title', sub_title: 'sub_title', image_url: 'https://example.com/sample.png')
     element_actions = [
-      Lineworks::Api::Message::Action.postback('label', 'data')
+      Lineworks::Bot::Message::Action.postback('label', 'data')
     ]
     elements = [
-      Lineworks::Api::Message::Template.list_element(title: 'title', sub_title: 'sub_title',
+      Lineworks::Bot::Message::Template.list_element(title: 'title', sub_title: 'sub_title',
                                                      content_url: 'https://example.com/sample.png', actions: element_actions)
     ]
     actions = [
       [
-        Lineworks::Api::Message::Action.postback('label', 'data')
+        Lineworks::Bot::Message::Action.postback('label', 'data')
       ],
       [
-        Lineworks::Api::Message::Action.postback('label', 'data')
+        Lineworks::Bot::Message::Action.postback('label', 'data')
       ]
     ]
-    response = Lineworks::Api::Message::Template.list(cover, elements, actions)
+    response = Lineworks::Bot::Message::Template.list(cover, elements, actions)
 
     expected = {
       type: 'list_template',
@@ -145,12 +145,12 @@ describe Lineworks::Api::Message::Template do
   end
 
   it 'get the carousel message' do
-    action = Lineworks::Api::Message::Action.postback('label', 'data')
+    action = Lineworks::Bot::Message::Action.postback('label', 'data')
     columns = [
-      Lineworks::Api::Message::Template.carousel_column(original_content_url: 'https://example.com/sample.png',
+      Lineworks::Bot::Message::Template.carousel_column(original_content_url: 'https://example.com/sample.png',
                                                         title: 'title', text: 'text', default_action: action, actions: [action])
     ]
-    response = Lineworks::Api::Message::Template.carousel('rectangle', 'cover', columns)
+    response = Lineworks::Bot::Message::Template.carousel('rectangle', 'cover', columns)
 
     expected = {
       type: 'carousel',
@@ -181,7 +181,7 @@ describe Lineworks::Api::Message::Template do
       }
     }
 
-    response = Lineworks::Api::Message::Template.flexible alt_text, contents
+    response = Lineworks::Bot::Message::Template.flexible alt_text, contents
 
     expected = {
       type: 'flex',
@@ -193,8 +193,8 @@ describe Lineworks::Api::Message::Template do
 
   it 'get the quick response item' do
     image_url = 'https://example.com/image_preview.png'
-    action = Lineworks::Api::Message::Action.postback('label', 'data')
-    item = Lineworks::Api::Message::QuickReplyTemplate::QuickReplyItem.new( image_url, action)
+    action = Lineworks::Bot::Message::Action.postback('label', 'data')
+    item = Lineworks::Bot::Message::QuickReplyTemplate::QuickReplyItem.new( image_url, action)
 
     expected = {
       imageUrl: image_url,
@@ -205,9 +205,9 @@ describe Lineworks::Api::Message::Template do
 
   it 'get the quick response' do
     image_url = 'https://example.com/image_preview.png'
-    action = Lineworks::Api::Message::Action.postback('label', 'data')
-    item = Lineworks::Api::Message::QuickReplyTemplate::QuickReplyItem.new( image_url, action)
-    response = Lineworks::Api::Message::QuickReplyTemplate.new(
+    action = Lineworks::Bot::Message::Action.postback('label', 'data')
+    item = Lineworks::Bot::Message::QuickReplyTemplate::QuickReplyItem.new( image_url, action)
+    response = Lineworks::Bot::Message::QuickReplyTemplate.new(
       'text',
       [item]
     ).to_h

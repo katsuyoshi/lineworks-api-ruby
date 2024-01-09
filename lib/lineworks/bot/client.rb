@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require 'line/bot'
-require 'lineworks/api/event'
+require 'lineworks/bot/event'
 
 # @see: message types https://developers.worksmobile.com/jp/docs/bot-send-content
 
 module Lineworks
-  module Api
+  module Bot
     # API Client of Line Works Bot SDK Ruby
     #
     #   @client ||= Lineworks::Bot::Client.new do |config|

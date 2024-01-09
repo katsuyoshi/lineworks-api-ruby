@@ -47,7 +47,7 @@ PROFILE_CONTENT = <<"EOS"
 EOS
 
 
-describe Lineworks::Api::Client do
+describe Lineworks::Bot::Client do
   def dummy_config
     {
       channel_token: 'access token',
@@ -55,7 +55,7 @@ describe Lineworks::Api::Client do
   end
 
   def generate_client
-    client = Lineworks::Api::Client.new do |config|
+    client = Lineworks::Bot::Client.new do |config|
       config.channel_token = dummy_config[:channel_token]
     end
 
@@ -64,7 +64,7 @@ describe Lineworks::Api::Client do
 
 
   it 'gets profile' do
-    uri_template = Addressable::Template.new Lineworks::Api::DEFAULT_ENDPOINT + '/users/{user_id}'
+    uri_template = Addressable::Template.new Lineworks::Bot::DEFAULT_ENDPOINT + '/users/{user_id}'
     stub_request(:get, uri_template).to_return { |request| {body: PROFILE_CONTENT, status: 200} }
 
     client = generate_client

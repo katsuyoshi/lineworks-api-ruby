@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'lineworks/api/version'
+require 'lineworks/bot/version'
 
 module Lineworks
-  module Api
+  module Bot
     # DEFAULT_OAUTH_ENDPOINT = "https://api.line.me"
     DEFAULT_ENDPOINT = 'https://www.worksapis.com/v1.0'
     # DEFAULT_BLOB_ENDPOINT = "https://api-data.line.me/v2"
