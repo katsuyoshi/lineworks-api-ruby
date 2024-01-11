@@ -1,12 +1,13 @@
 module Lineworks
   module Bot
     module Message
+      # @see: https://developers.worksmobile.com/jp/docs/bot-channel-message-send
 
       # Text message class
       class Text
         attr_accessor :message
 
-        def initialize message
+          def initialize message
           case message
           when Hash
             @message = message[:message]

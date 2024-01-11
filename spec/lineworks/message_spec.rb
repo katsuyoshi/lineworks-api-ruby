@@ -171,7 +171,7 @@ describe Lineworks::Bot::Message do
   it 'get the button message' do
     title = 'title'
     actions = [
-      Action.postback('label', 'data')
+      Action::Postback.new('label', 'data')
     ]
 
     response = Button.new(title, actions).to_h
@@ -187,7 +187,7 @@ describe Lineworks::Bot::Message do
   it 'get the button message by keyword arg' do
     title = 'title'
     actions = [
-      Action.postback('label', 'data')
+      Action::Postback.new('label', 'data')
     ]
 
     response = Button.new(title: title, actions: actions).to_h
@@ -207,7 +207,7 @@ describe Lineworks::Bot::Message do
       image_url: 'https://example.com/sample.png'
     )
     element_actions = [
-      Action.postback('label', 'data')
+      Action::Postback.new('label', 'data')
     ]
     elements = [
       List::Element.new('title',
@@ -217,10 +217,10 @@ describe Lineworks::Bot::Message do
     ]
     actions = [
       [
-        Action.postback('label', 'data')
+        Action::Postback.new('label', 'data')
       ],
       [
-        Action.postback('label', 'data')
+        Action::Postback.new('label', 'data')
       ]
     ]
 
@@ -242,7 +242,7 @@ describe Lineworks::Bot::Message do
       image_url: 'https://example.com/sample.png'
     )
     element_actions = [
-      Action.postback('label', 'data')
+      Action::Postback.new('label', 'data')
     ]
     elements = [
       List::Element.new(title: 'title',
@@ -252,10 +252,10 @@ describe Lineworks::Bot::Message do
     ]
     actions = [
       [
-        Action.postback('label', 'data')
+        Action::Postback.new('label', 'data')
       ],
       [
-        Action.postback('label', 'data')
+        Action::Postback.new('label', 'data')
       ]
     ]
 
@@ -271,7 +271,7 @@ describe Lineworks::Bot::Message do
   end
 
   it 'get the carousel message' do
-    action = Action.postback('label', 'data')
+    action = Action::Postback.new('label', 'data')
     columns = [
       Carousel::Column.new(
         'https://example.com/sample.png',
@@ -295,7 +295,7 @@ describe Lineworks::Bot::Message do
   end
 
   it 'get the carousel message by keyword arg' do
-    action = Action.postback('label', 'data')
+    action = Action::Postback.new('label', 'data')
     columns = [
       Carousel::Column.new(
         original_content_url: 'https://example.com/sample.png',
@@ -379,7 +379,7 @@ describe Lineworks::Bot::Message do
 
   it 'get the quick reply' do
     image_url = 'https://example.com/image_preview.png'
-    action = Action.postback('label', 'data')
+    action = Action::Postback.new('label', 'data')
     item = QuickReply::Item.new(image_url, action)
 
     response = QuickReply.new(
@@ -396,7 +396,7 @@ describe Lineworks::Bot::Message do
 
   it 'get the quick reply by keyword arg' do
     image_url = 'https://example.com/image_preview.png'
-    action = Action.postback('label', 'data')
+    action = Action::Postback.new('label', 'data')
     item = QuickReply::Item.new( image_url: image_url, action: action)
 
     response = QuickReply.new(
