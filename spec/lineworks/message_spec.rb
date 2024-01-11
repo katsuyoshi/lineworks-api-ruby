@@ -317,6 +317,36 @@ describe Lineworks::Bot::Message do
     expect(response).to eq(expected)
   end
 
+  it 'get the flexible message' do
+    alt_text = 'alt_text'
+    contents = {
+      "type": 'bubble',
+      "body": {
+        "type": 'box',
+        "layout": 'vertical',
+        "contents": [
+          {
+            "type": 'text',
+            "text": 'hello'
+          },
+          {
+            "type": 'text',
+            "text": 'world'
+          }
+        ]
+      }
+    }
+
+    response = Flex.new(alt_text, contents).to_h
+
+    expected = {
+      type: 'flex',
+      altText: alt_text,
+      contents: contents
+    }
+    expect(response).to eq(expected)
+  end
+
   it 'get the flexible message by keyword arg' do
     alt_text = 'alt_text'
     contents = {
@@ -337,7 +367,7 @@ describe Lineworks::Bot::Message do
       }
     }
 
-    response = Lineworks::Bot::Message::Template.flexible alt_text, contents
+    response = Flex.new(alt_text: alt_text, contents: contents).to_h
 
     expected = {
       type: 'flex',

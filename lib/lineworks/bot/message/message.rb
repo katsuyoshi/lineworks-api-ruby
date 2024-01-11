@@ -307,6 +307,31 @@ module Lineworks
 
       end
 
+      # Create a flexible object.
+      # @param alt_text [String] Alt text
+      # @param contents [Hash] Contents
+      class Flex
+        attr_accessor :alt_text, :contents
+        def initialize alt_text, contents=nil
+          case alt_text
+          when Hash
+            @alt_text = alt_text[:alt_text]
+            @contents = alt_text[:contents]
+          else
+            @alt_text = alt_text
+            @contents = contents
+          end
+        end
+
+        def to_h
+          {
+            type: 'flex',
+            altText: alt_text,
+            contents: contents
+        }.compact
+        end
+      end
+
       # Get quick reply object.
       class QuickReply
         attr_accessor :text, :items
