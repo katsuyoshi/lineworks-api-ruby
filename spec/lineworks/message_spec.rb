@@ -9,6 +9,19 @@ describe Lineworks::Bot::Message do
   it 'get the text message' do
     message = 'Hello, world'
 
+    response = Text.new(message).to_h
+
+    expected = {
+      type: 'text',
+      text: message
+    }
+    expect(response).to eq(expected)
+  end
+
+
+  it 'get the text message by keyword arg' do
+    message = 'Hello, world'
+
     response = Text.new(message: message).to_h
 
     expected = {
@@ -19,6 +32,20 @@ describe Lineworks::Bot::Message do
   end
 
   it 'get the stamp message' do
+    package_id = 1
+    sticker_id = 2
+
+    response = Stamp.new(package_id, sticker_id).to_h
+
+    expected = {
+      type: 'sticker',
+      packageId: '1',
+      stickerId: '2'
+    }
+    expect(response).to eq(expected)
+  end
+
+  it 'get the stamp message by keyword arg' do
     package_id = 1
     sticker_id = 2
 
@@ -36,6 +63,20 @@ describe Lineworks::Bot::Message do
     preview_url = 'https://example.com/image_preview.png'
     original_url = 'https://example.com/image.png'
 
+    response = Image.new(original_url, preview_url).to_h
+
+    expected = {
+      type: 'image',
+      originalContentUrl: original_url,
+      previewImageUrl: preview_url
+    }
+    expect(response).to eq(expected)
+  end
+
+  it 'get the image message with urls by keyword arg' do
+    preview_url = 'https://example.com/image_preview.png'
+    original_url = 'https://example.com/image.png'
+
     response = Image.new(original_url: original_url, preview_url: preview_url).to_h
 
     expected = {
@@ -46,7 +87,7 @@ describe Lineworks::Bot::Message do
     expect(response).to eq(expected)
   end
 
-  it 'get the image message with only original url' do
+  it 'get the image message with only original url by keyword arg' do
     original_url = 'https://example.com/image.png'
 
     response = Image.new(original_url: original_url).to_h
@@ -59,7 +100,7 @@ describe Lineworks::Bot::Message do
     expect(response).to eq(expected)
   end
 
-  it 'get the image message with file id' do
+  it 'get the image message with file id by keyword arg' do
     file_id = 'image_id'
     
     response = Image.new(file_id: file_id).to_h
@@ -74,16 +115,16 @@ describe Lineworks::Bot::Message do
   it 'get the file message with url' do
     file_url = 'https://example.com/file.pdf'
 
-    response = Message::File.new(url: file_url).to_h
+    response = Message::File.new(nil, file_url).to_h
 
     expected = {
       type: 'file',
-      originalContentUrl: file_url
+      fileId: file_url
     }
     expect(response).to eq(expected)
   end
 
-  it 'get the file message with file id' do
+  it 'get the file message with file id by keyword arg' do
     file_id = 'file_id'
 
     response = Message::File.new(file_id: file_id).to_h
@@ -100,7 +141,23 @@ describe Lineworks::Bot::Message do
     link = 'link'
     url = 'https://example.com'
 
-    response = Link.new(content: content, link: link, url: url).to_h
+    response = Link.new(content, link, url).to_h
+
+    expected = {
+      type: 'link',
+      contentText: content,
+      linkText: link,
+      link: url
+    }
+    expect(response).to eq(expected)
+  end
+
+  it 'get the link message by keyword arg' do
+    content = 'content'
+    link = 'link'
+    url = 'https://example.com'
+
+    response = Link.new(content_text: content, link_text: link, url: url).to_h
 
     expected = {
       type: 'link',
@@ -117,6 +174,22 @@ describe Lineworks::Bot::Message do
       Action.postback('label', 'data')
     ]
 
+    response = Button.new(title, actions).to_h
+
+    expected = {
+      type: 'button_template',
+      contentText: title,
+      actions: actions
+    }
+    expect(response).to eq(expected)
+  end
+
+  it 'get the button message by keyword arg' do
+    title = 'title'
+    actions = [
+      Action.postback('label', 'data')
+    ]
+
     response = Button.new(title: title, actions: actions).to_h
 
     expected = {
@@ -128,6 +201,41 @@ describe Lineworks::Bot::Message do
   end
 
   it 'get the list message' do
+    header = 'header'
+    cover = List::Cover.new(title: 'title',
+      sub_title: 'sub_title',
+      image_url: 'https://example.com/sample.png'
+    )
+    element_actions = [
+      Action.postback('label', 'data')
+    ]
+    elements = [
+      List::Element.new('title',
+        sub_title: 'sub_title',
+        content_url: 'https://example.com/sample.png', actions: element_actions
+      )
+    ]
+    actions = [
+      [
+        Action.postback('label', 'data')
+      ],
+      [
+        Action.postback('label', 'data')
+      ]
+    ]
+
+    response = List.new(cover, elements, actions).to_h
+
+    expected = {
+      type: 'list_template',
+      cover: cover.to_h,
+      elements: elements.map(&:to_h),
+      actions: actions.map{ _1.map(&:to_h) }
+    }
+    expect(response).to eq(expected)
+  end
+
+  it 'get the list message by keyword arg' do
     header = 'header'
     cover = List::Cover.new(title: 'title',
       sub_title: 'sub_title',
@@ -166,6 +274,30 @@ describe Lineworks::Bot::Message do
     action = Action.postback('label', 'data')
     columns = [
       Carousel::Column.new(
+        'https://example.com/sample.png',
+        nil,
+        'title',
+        'text',
+        action,
+        actions: [action]
+      )
+    ]
+
+    response = Carousel.new('rectangle', 'cover', columns).to_h
+
+    expected = {
+      type: 'carousel',
+      imageAspectRatio: 'rectangle',
+      imageSize: 'cover',
+      columns: columns.map(&:to_h)
+    }
+    expect(response).to eq(expected)
+  end
+
+  it 'get the carousel message by keyword arg' do
+    action = Action.postback('label', 'data')
+    columns = [
+      Carousel::Column.new(
         original_content_url: 'https://example.com/sample.png',
         title: 'title',
         text: 'text',
@@ -185,7 +317,7 @@ describe Lineworks::Bot::Message do
     expect(response).to eq(expected)
   end
 
-  it 'get the flexible message' do
+  it 'get the flexible message by keyword arg' do
     alt_text = 'alt_text'
     contents = {
       "type": 'bubble',
@@ -215,20 +347,24 @@ describe Lineworks::Bot::Message do
     expect(response).to eq(expected)
   end
 
-  it 'get the quick response item' do
+  it 'get the quick reply' do
     image_url = 'https://example.com/image_preview.png'
     action = Action.postback('label', 'data')
+    item = QuickReply::Item.new(image_url, action)
 
-    item = QuickReply::Item.new( image_url: image_url, action: action).to_h
+    response = QuickReply.new(
+      'text',
+      [item]
+    ).to_h
 
     expected = {
-      imageUrl: image_url,
-      action: action.to_h
+      text: 'text',
+      items: [item.to_h]
     }
-    expect(item).to eq(expected)
+    expect(response.to_h).to eq(expected)
   end
 
-  it 'get the quick response' do
+  it 'get the quick reply by keyword arg' do
     image_url = 'https://example.com/image_preview.png'
     action = Action.postback('label', 'data')
     item = QuickReply::Item.new( image_url: image_url, action: action)
