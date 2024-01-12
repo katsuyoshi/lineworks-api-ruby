@@ -22,6 +22,7 @@ module Lineworks
               @data = data
               @text = text
             end
+            yield self if block_given?
           end
 
           def to_h
@@ -49,6 +50,7 @@ module Lineworks
               @text = text
               @data = data
             end
+            yield self if block_given?
           end
 
           def to_h
@@ -74,6 +76,7 @@ module Lineworks
               @label = label
               @uri = uri
             end
+            yield self if block_given?
           end
 
           def to_h
@@ -96,6 +99,7 @@ module Lineworks
             else
               @label = label
             end
+            yield self if block_given?
           end
 
           def to_h
@@ -117,6 +121,7 @@ module Lineworks
             else
               @label = label
             end
+            yield self if block_given?
           end
 
           def to_h
@@ -161,6 +166,7 @@ module Lineworks
               @label = label
               @copy = copy
             end
+            yield self if block_given?
           end
 
           def to_h

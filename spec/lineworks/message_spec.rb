@@ -179,7 +179,7 @@ describe Lineworks::Bot::Message do
     expected = {
       type: 'button_template',
       contentText: title,
-      actions: actions
+      actions: actions.map(&:to_h)
     }
     expect(response).to eq(expected)
   end
@@ -195,7 +195,7 @@ describe Lineworks::Bot::Message do
     expected = {
       type: 'button_template',
       contentText: title,
-      actions: actions
+      actions: actions.map(&:to_h)
     }
     expect(response).to eq(expected)
   end
@@ -279,7 +279,7 @@ describe Lineworks::Bot::Message do
         'title',
         'text',
         action,
-        actions: [action]
+        [action]
       )
     ]
 
@@ -391,7 +391,7 @@ describe Lineworks::Bot::Message do
       text: 'text',
       items: [item.to_h]
     }
-    expect(response.to_h).to eq(expected)
+    expect(response).to eq(expected)
   end
 
   it 'get the quick reply by keyword arg' do
@@ -408,7 +408,7 @@ describe Lineworks::Bot::Message do
       text: 'text',
       items: [item.to_h]
     }
-    expect(response.to_h).to eq(expected)
+    expect(response).to eq(expected)
   end
 
 end

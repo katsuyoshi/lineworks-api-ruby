@@ -15,7 +15,6 @@ describe Lineworks::Bot::Client do
     channel_id = 'channel_id'
     message = 'Hello, world'
     response = client.send_messages_to_channel(bot_id, channel_id, message)
-
     expected = {
       content: {
         type: 'text',

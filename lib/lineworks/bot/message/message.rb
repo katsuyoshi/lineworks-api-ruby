@@ -6,6 +6,7 @@ module Lineworks
       # Text message class
       class Text
         attr_accessor :message
+        attr_accessor :quick_reply
 
           def initialize message
           case message
@@ -14,13 +15,15 @@ module Lineworks
           else
             @message = message
           end
+          yield self if block_given?
         end
         
         def to_h
           {
             type: 'text',
-            text: message
-          }
+            text: message,
+            quickReply: quick_reply&.to_h
+          }.compact
         end
 
       end
@@ -28,6 +31,7 @@ module Lineworks
       # Stamp message class
       class Stamp
         attr_accessor :package_id, :sticker_id
+        attr_accessor :quick_reply
 
         def initialize package_id, sticker_id=nil
           case package_id
@@ -38,14 +42,16 @@ module Lineworks
             @package_id = package_id
             @sticker_id = sticker_id
           end
+          yield self if block_given?
         end
         
         def to_h
           {
             type: 'sticker',
             packageId: package_id.to_s,
-            stickerId: sticker_id.to_s
-          }
+            stickerId: sticker_id.to_s,
+            quickReply: quick_reply&.to_h
+          }.compact
         end
 
       end
@@ -53,6 +59,7 @@ module Lineworks
       # Image message class
       class Image
         attr_accessor :original_url, :preview_url, :file_id
+        attr_accessor :quick_reply
 
         def initialize original_url, preview_url=nil, arfile_idg_b=nil
           case original_url
@@ -65,6 +72,7 @@ module Lineworks
             @preview_url = preview_url
             @file_id = file_id
           end
+          yield self if block_given?
         end
         
         def to_h
@@ -76,7 +84,8 @@ module Lineworks
             type: 'image',
             previewImageUrl: preview_url || original_url,
             originalContentUrl: original_url,
-            fileId: file_id
+            fileId: file_id,
+            quickReply: quick_reply&.to_h
           }.compact
         end
 
@@ -85,6 +94,7 @@ module Lineworks
       # File message class
       class File
         attr_accessor :url, :file_id
+        attr_accessor :quick_reply
 
         def initialize url, file_id=nil
           case url
@@ -95,6 +105,7 @@ module Lineworks
             @url = url
             @file_id = file_id
           end  
+          yield self if block_given?
         end
         
         def to_h
@@ -105,7 +116,8 @@ module Lineworks
           {
             type: 'file',
             originalContentUrl: url,
-            fileId: file_id
+            fileId: file_id,
+            quickReply: quick_reply&.to_h
           }.compact
         end
 
@@ -114,6 +126,7 @@ module Lineworks
       # Link message class
       class Link
         attr_accessor :content_text, :link_text, :url
+        attr_accessor :quick_reply
 
         def initialize content_text, link_text=nil, url=nil
           case content_text
@@ -126,6 +139,7 @@ module Lineworks
             @link_text = link_text
             @url = url
           end
+          yield self if block_given?
         end
         
         def to_h
@@ -133,8 +147,9 @@ module Lineworks
             type: 'link',
             contentText: content_text,
             linkText: link_text,
-            link: url
-          }
+            link: url,
+            quickReply: quick_reply&.to_h
+          }.compact
         end
 
       end
@@ -142,24 +157,27 @@ module Lineworks
       # Button message class
       class Button
         attr_accessor :title, :actions
+        attr_accessor :quick_reply
 
         def initialize title, actions=nil
           case title
           when Hash
             @title = title[:title]
-            @actions = title[:actions] || []
+            @actions = title[:actions]
           else
             @title = title
-            @actions = actions || []
+            @actions = actions
           end
+          yield self if block_given?
         end
         
         def to_h
           {
             type: 'button_template',
             contentText: title,
-            actions: actions
-          }
+            actions: actions&.map(&:to_h),
+            quickReply: quick_reply&.to_h
+          }.compact
         end
 
       end
@@ -167,26 +185,29 @@ module Lineworks
       # List message class
       class List
         attr_accessor :cover, :elements, :actions
+        attr_accessor :quick_reply
 
         def initialize cover, elements=nil, actions=nil
           case cover
           when Hash
             @cover = cover[:cover]
-            @elements = cover[:elements] || []
+            @elements = cover[:elements]
             @actions = cover[:actions] || [[], []]
           else
             @cover = cover
-            @elements = elements || []
+            @elements = elements
             @actions = actions || [[], []]
           end
+          yield self if block_given?
         end
         
         def to_h
           {
             type: 'list_template',
             cover: cover.to_h,
-            elements: elements.map(&:to_h),
-            actions: actions.map { _1.map(&:to_h) }
+            elements: elements&.map(&:to_h),
+            actions: actions&.map { _1.map(&:to_h) },
+            quickReply: quick_reply&.to_h
           }.compact
         end
 
@@ -199,6 +220,7 @@ module Lineworks
             @sub_title = args[:sub_title]
             @image_url = args[:image_url]
             @file_id = args[:file_id]
+            yield self if block_given?
           end
 
           def to_h
@@ -228,8 +250,9 @@ module Lineworks
               @sub_title = sub_title
               @content_url = content_url
               @file_id = file_id
-              @actions = actions || []
+              @actions = actions
             end
+            yield self if block_given?
           end
 
           def to_h
@@ -248,18 +271,20 @@ module Lineworks
       # Carousel message class
       class Carousel
         attr_accessor :image_aspect_ratio, :image_size, :columns
+        attr_accessor :quick_reply
 
         def initialize image_aspect_ratio, image_size=nil, columns=nil
           case image_aspect_ratio
           when Hash
             @image_aspect_ratio = image_aspect_ratio[:image_aspect_ratio] || 'rectangle'
             @image_size = image_aspect_ratio[:image_size] || 'cover'
-            @columns = image_aspect_ratio[:columns] || []
+            @columns = image_aspect_ratio[:columns]
           else
             @image_aspect_ratio = image_aspect_ratio || 'rectangle'
             @image_size = image_size || 'cover'
-            @columns = columns || []
-            end
+            @columns = columns
+          end
+          yield self if block_given?
         end
         
         def to_h
@@ -267,8 +292,9 @@ module Lineworks
             type: 'carousel',
             imageAspectRatio: image_aspect_ratio,
             imageSize: image_size,
-            columns: columns.map(&:to_h)
-          }
+            columns: columns&.map(&:to_h),
+            quickReply: quick_reply
+          }.compact
         end
 
         # Get a carousel column object.
@@ -283,25 +309,26 @@ module Lineworks
               @title = original_content_url[:title]
               @text = original_content_url[:text]
               @default_action = original_content_url[:default_action]
-              @actions = original_content_url[:actions] || []
+              @actions = original_content_url[:actions]
             else
               @original_content_url = original_content_url
               @file_id = file_id
               @title = title
               @text = text
               @default_action = default_action
-              @actions = actions || []
+              @actions = actions
             end
+            yield self if block_given?
           end
 
           def to_h
             {
-              thumbnailImageUrl: @original_content_url,
-              imageBackgroundColor: @file_id,
-              title: @title,
-              text: @text,
-              defaultAction: @default_action,
-              actions: @actions
+              thumbnailImageUrl: original_content_url,
+              imageBackgroundColor: file_id,
+              title: title,
+              text: text,
+              defaultAction: default_action&.to_h,
+              actions: actions&.map(&:to_h)
             }.compact
           end
         end
@@ -313,6 +340,8 @@ module Lineworks
       # @param contents [Hash] Contents
       class Flex
         attr_accessor :alt_text, :contents
+        attr_accessor :quick_reply
+
         def initialize alt_text, contents=nil
           case alt_text
           when Hash
@@ -322,13 +351,15 @@ module Lineworks
             @alt_text = alt_text
             @contents = contents
           end
+          yield self if block_given?
         end
 
         def to_h
           {
             type: 'flex',
             altText: alt_text,
-            contents: contents
+            contents: contents,
+            quickReply: quick_reply&.to_h
         }.compact
         end
       end
@@ -341,17 +372,18 @@ module Lineworks
           case text
           when Hash
             @text = text[:text]
-            @items = text[:items] || []
+            @items = text[:items]
           else
             @text = text
-            @items = items || []
-            end
+            @items = items
+          end
+          yield self if block_given?
         end
 
         def to_h
           {
             text: @text,
-            items: @items.map(&:to_h)
+            items: @items&.map(&:to_h)
           }.compact
         end
 
@@ -367,6 +399,7 @@ module Lineworks
               @image_url = image_url
               @action = action
             end
+            yield self if block_given?
           end
 
           def to_h

@@ -36,11 +36,10 @@ def broadcast(messages)
 end
 
 def reply_content(bot_id, event, content)
-p content
   res = client.send_messages_to_channel(
     bot_id,
     event.channel_id,
-    content
+    content.to_h
   )
   logger.warn res.read_body unless Net::HTTPOK === res
   res
@@ -159,14 +158,14 @@ def handle_message(bot_id, event)
 
     when 'buttons'
       reply_content(bot_id, event, 
-        Template.button(
+        Button.new(
           'My button sample',
           [
-            Action.uri('Go to line-works.com', 'https://line-works.com'),
+            Action::Uri.new('Go to line-works.com', 'https://line-works.com'),
             # postback is not allowed in button template
-            #Action.postback('Send postback', 'hello world'),
-            Action.message('Send message', 'This is message')
-          ].map(&:to_h)
+            #Action::Postback.new('Send postback', 'hello world'),
+            Action::Message.new('Send message', 'This is message')
+          ]
         )
       )
 
@@ -189,53 +188,53 @@ def handle_message(bot_id, event)
 
     when 'carousel'
       reply_content(bot_id, event, 
-        Template.carousel(
+        Carousel.new(
           'rectangle',
           'cover',
           [
-            Template.carousel_column(
+            Carousel::Column.new(
               title: 'hoge',
               text: 'fuga',
               actions: [
-                Action.uri('Go to line-works.com', 'https://line-works.com'),
-                Action.postback('Send postback', 'hello world'),
-                Action.message('Send message', 'This is message')
-              ].map(&:to_h)
+                Action::Uri.new('Go to line-works.com', 'https://line-works.com'),
+                Action::Postback.new('Send postback', 'hello world'),
+                Action::Message.new('Send message', 'This is message')
+              ]
             )
             # CHECKME: Datetime picker is not supported in LINE WORKS, right?
-          ].map(&:to_h)
+          ]
         )
       )
 
     when 'image carousel'
       reply_content(bot_id, event, 
-        Template.carousel(
+        Carousel.new(
           'rectangle',
           'cover',
           [
-            Template.carousel_column(
+            Carousel::Column.new(
               text: 'Action 1',
               original_content_url: THUMBNAIL_URL,
               actions: [
-                Action.uri('Go to line-works.com', 'https://line-works.com')
-              ].map(&:to_h)
+                Action::Uri.new('Go to line-works.com', 'https://line-works.com')
+              ]
             ),
-            Template.carousel_column(
+            Carousel::Column.new(
               text: 'Action 2',
               original_content_url: THUMBNAIL_URL,
               actions: [
-                Action.postback('Send postback', 'hello world')
-              ].map(&:to_h)
+                Action::Postback.new('Send postback', 'hello world')
+              ]
             ),
-            Template.carousel_column(
+            Carousel::Column.new(
               text: 'Action 3',
               original_content_url: THUMBNAIL_URL,
               actions: [
-                Action.message('Send message', 'This is message')
-              ].map(&:to_h)
+                Action::Message.new('Send message', 'This is message')
+              ]
             )
             # CHECKME: Datetime picker is not supported in line-works, right?
-          ].map(&:to_h)
+          ]
         )
       )
 
@@ -291,7 +290,7 @@ def handle_message(bot_id, event)
 
     when 'flex'
       reply_content(bot_id, event,
-        Template.flexible(
+        Flex.new(
           'this is a flex message',
           {
             type: "bubble",
@@ -339,7 +338,7 @@ def handle_message(bot_id, event)
 
     when 'flex carousel'
       reply_content(bot_id, event,
-        Template.flexible(
+        Flex.new(
           "this is a flex carousel",
           {
             type: "carousel",
@@ -414,78 +413,81 @@ def handle_message(bot_id, event)
       )
 
     when 'quickreply'
-      reply_content(bot_id, event, {
-        type: 'text',
-        text: '[QUICK REPLY]',
-        quickReply: QuickReplyTemplate.new(
-          'action',
-          [
-            QuickReplyTemplate::QuickReplyItem.new(
-              QUICK_REPLY_ICON_URL,
-              Action.message('Sushi', 'Sushi')
-            ),
-            QuickReplyTemplate::QuickReplyItem.new(
-              nil,
-              Action.location('Send location')
-            ),
-            QuickReplyTemplate::QuickReplyItem.new(
-              QUICK_REPLY_ICON_URL,
-              Action.camera('Open camera')
-            ),
-            QuickReplyTemplate::QuickReplyItem.new(
-              QUICK_REPLY_ICON_URL,
-              Action.camera_roll('Open cameraRoll')
-            ),
-            QuickReplyTemplate::QuickReplyItem.new(
-              QUICK_REPLY_ICON_URL,
-              Action.postback('buy', 'action=buy&itemid=111', 'buy')
-            ),
-            QuickReplyTemplate::QuickReplyItem.new(
-              QUICK_REPLY_ICON_URL,
-              Action.message('Yes', 'Yes')
+      reply_content(bot_id, event, 
+        Text.new('[QUICK REPLY]') do |t|
+          t.quick_reply = QuickReply.new(
+              items: [
+                QuickReply::Item.new(
+                  QUICK_REPLY_ICON_URL,
+                  Action::Message.new('Sushi', 'Sushi')
+                ),
+                QuickReply::Item.new(
+                  nil,
+                  Action::Location.new('Send location')
+                ),
+                QuickReply::Item.new(
+                  QUICK_REPLY_ICON_URL,
+                  Action::Camera.new('Open camera')
+                ),
+                QuickReply::Item.new(
+                  QUICK_REPLY_ICON_URL,
+                  Action::CameraRoll.new('Open cameraRoll')
+                ),
+                QuickReply::Item.new(
+                  QUICK_REPLY_ICON_URL,
+                  Action::Postback.new('buy', 'action=buy&itemid=111', 'buy')
+                ),
+                QuickReply::Item.new(
+                  QUICK_REPLY_ICON_URL,
+                  Action::Message.new('Yes', 'Yes')
+                )
+              ]
             )
-          ]
-        ).to_h
-      })
+        end
+      )
 
     when 'flex1'
-      reply_content(bot_id, event, {
-        "type": "bubble",
-        "size": "nano",
-        "hero": {
-          "type": "image",
-          "url": THUMBNAIL_URL,
-          "size": "full",
-          "aspectRatio": "4:3",
-          "action": {
-            "type": "uri",
-            "uri": "http://linecorp.com/"
-          }
-        },
-        "body": {
-          "type": "box",
-          "layout": "vertical",
-          "contents": [
-            {
-              "type": "text",
-              "text": "hello",
+      reply_content(bot_id, event, 
+        Flex.new("", 
+          {
+            "type": "bubble",
+            "size": "nano",
+            "hero": {
+              "type": "image",
+              "url": THUMBNAIL_URL,
+              "size": "full",
+              "aspectRatio": "4:3",
+              "action": {
+                "type": "uri",
+                "uri": "https://line-works.com"
+              }
+            },
+            "body": {
+              "type": "box",
+              "layout": "vertical",
               "contents": [
                 {
-                  "type": "span",
+                  "type": "text",
                   "text": "hello",
-                  "color": "#FF0000"
-                },
-                {
-                  "type": "span",
-                  "text": "world",
-                  "color": "#0000FF"
+                  "contents": [
+                    {
+                      "type": "span",
+                      "text": "hello",
+                      "color": "#FF0000"
+                    },
+                    {
+                      "type": "span",
+                      "text": "world",
+                      "color": "#0000FF"
+                    }
+                  ]
                 }
-              ]
-            }
-          ],
-          "paddingAll": "10px"
-        },
-      })
+              ],
+              "paddingAll": "10px"
+            },
+          }
+        ).to_h
+      )
 
     when 'bye'
       case event['source']['type']
@@ -499,6 +501,8 @@ def handle_message(bot_id, event)
         client.leave_room(event['source']['roomId'])
       end
 
+=begin
+    # CHECKME: pending status
     when 'stats'
       response = broadcast({
         type: 'template',
@@ -523,6 +527,7 @@ def handle_message(bot_id, event)
       request_id = Regexp.last_match[:request_id]
       stats = client.get_user_interaction_statistics(request_id)
       reply_text(bot_id, event, "[STATS]\n#{stats.body}")
+=end
 
     else
       reply_text(bot_id, event, "[ECHO]\n#{event.message['text']}")

@@ -32,7 +32,7 @@ module Lineworks
 
         case messages
         when String
-          payload[:content] = Message::Template.text messages
+          payload[:content] = Text.new(messages).to_h
         when Hash
           payload[:content] = messages
         end
@@ -57,7 +57,7 @@ module Lineworks
 
         case messages
         when String
-          payload[:content] = Message::Template.text messages
+          payload[:content] = Message::Text.new(messages).to_h
         when Hash
           payload[:content] = messages
         end
