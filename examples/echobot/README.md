@@ -24,12 +24,12 @@ And then fill environment variables to .env file.
 
 ```
 # LINE WORKS's Bot Secret
-LINE_WORKS_BOT_SECRET='...'
+LINEWORKS_BOT_SECRET='...'
 
 # You need to get an access token first.
 # There is an article about how to get an access token using Postman. Please refer to it.
 # @see: https://qiita.com/mmclsntr/items/eee8d8f3546410fe6652
-LINE_WORKS_ACCESS_TOKEN='...'
+LINEWORKS_ACCESS_TOKEN='...'
 ```
 
 Run this example.

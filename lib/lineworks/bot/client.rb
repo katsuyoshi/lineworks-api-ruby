@@ -10,8 +10,8 @@ module Lineworks
     # API Client of Line Works Bot SDK Ruby
     #
     #   @client ||= Lineworks::Bot::Client.new do |config|
-    #     config.channel_secret = ENV["LINE_WORKS_BOT_SECRET"]
-    #     config.channel_token = ENV["LINE_WORKS_ACCESS_TOKEN"]
+    #     config.channel_secret = ENV["LINEWORKS_BOT_SECRET"]
+    #     config.channel_token = ENV["LINEWORKS_ACCESS_TOKEN"]
     #   end
     class Client < Line::Bot::Client
       def endpoint

@@ -8,8 +8,8 @@ Dotenv.load
 
 def client
   @client ||= Lineworks::Bot::Client.new do |config|
-    config.channel_secret = ENV['LINE_WORKS_BOT_SECRET']
-    config.channel_token = ENV['LINE_WORKS_ACCESS_TOKEN']
+    config.channel_secret = ENV['LINEWORKS_BOT_SECRET']
+    config.channel_token = ENV['LINEWORKS_ACCESS_TOKEN']
   end
 end
 
