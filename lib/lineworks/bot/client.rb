@@ -14,10 +14,60 @@ module Lineworks
     #     config.channel_token = ENV["LINEWORKS_ACCESS_TOKEN"]
     #   end
     class Client < Line::Bot::Client
+      #attr_accessor :channel_token, :channel_id, :channel_secret, :endpoint, :blob_endpoint
+      attr_accessor :oauth_endpoint, :bot_secret, :service_account, :private_key
+
+
       def endpoint
         @endpoint ||= DEFAULT_ENDPOINT
       end
 
+      def oauth_endpoint
+        @oauth_endpoint ||= DEFAULT_OAUTH_ENDPOINT
+      end
+
+      def issue_access_token(scope='bot')
+        channel_id_required
+        channel_secret_required
+
+        endpoint_path = '/oauth/accessToken'
+        payload = URI.encode_www_form(
+          assertion: jwt,
+          grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+          client_id: channel_id,
+          client_secret: channel_secret,
+          scope: scope
+        )
+        headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
+        post(endpoint, endpoint_path, payload, headers)
+      end
+
+      def jwt
+        private_key_required
+        channel_id_required
+        service_account_required
+
+        if @jwt_expire_at.nil? || Time.now > @jwt_expire_at
+          @jwt = nil
+        end
+        @jwt ||= begin
+          private_key = OpenSSL::PKey::RSA.new private_key
+          header = {"alg" => "RS256", "typ" => "JWT"}
+          @jwt_expire_at = (Time.now + 60 * 60)
+          claim = {
+              "iss" => channel_id,
+              "sub" => service_account,
+              "iat" => Time.now.to_i,
+              "exp" => @jwt_expire_at.to_i
+          }
+          jwt = JSON::JWT.new(claim)
+          
+          jwt.header = header
+          jwt.sign(private_key).to_s
+        end
+      end
+  
+  
       # Send messages to a channel using channel_id.
       # @see: https://developers.worksmobile.com/jp/docs/bot-channel-message-send
       #
@@ -110,6 +160,18 @@ module Lineworks
         else
           { error: 'error' }
         end
+      end
+
+      def private_key_required
+        raise ArgumentError, '`private_key` is not configured' unless private_key
+      end
+      
+      def service_account_required
+        raise ArgumentError, '`service_account` is not configured' unless service_account
+      end
+
+      def bot_secret_required
+        raise ArgumentError, '`bot_secret` is not configured' unless bot_secret
       end
 
 

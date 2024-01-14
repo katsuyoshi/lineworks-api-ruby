@@ -8,7 +8,11 @@ Dotenv.load
 
 def client
   @client ||= Lineworks::Bot::Client.new do |config|
-    config.channel_secret = ENV['LINEWORKS_BOT_SECRET']
+    config.channel_id = ENV['LINEWORKS_CLIENT_ID']
+    config.channel_secret = ENV['LINEWORKS_CLIENT_SECRET']
+    config.service_account = ENV['LINEWORKS_SERVICE_ACCOUNT']
+    config.bot_secret = ENV['LINEWORKS_BOT_SECRET']
+    config.private_key = ENV['LINEWORKS_PRIVATE_KEY']
     config.channel_token = ENV['LINEWORKS_ACCESS_TOKEN']
   end
 end
@@ -33,3 +37,7 @@ post '/callback' do
   # Don't forget to return a successful response
   'OK'
 end
+
+
+jwt = Lineworks::Authentication.instance.jwt
+client.issue_access_token(jwt)
