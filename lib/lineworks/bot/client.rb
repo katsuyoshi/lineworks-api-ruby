@@ -2,6 +2,9 @@
 
 require 'line/bot'
 require 'lineworks/bot/event'
+require 'json'
+require 'jwt'
+
 
 # @see: message types https://developers.worksmobile.com/jp/docs/bot-send-content
 
@@ -26,45 +29,36 @@ module Lineworks
         @oauth_endpoint ||= DEFAULT_OAUTH_ENDPOINT
       end
 
+      # https://qiita.com/caovanbi/items/8abe98a5641c487e4727
       def issue_access_token(scope='bot')
-        channel_id_required
-        channel_secret_required
-
-        endpoint_path = '/oauth/accessToken'
-        payload = URI.encode_www_form(
+        endpoint_path = '/oauth2/v2.0/token'
+        uri = URI.parse(oauth_endpoint + endpoint_path)
+        https = Net::HTTP.new(uri.host, uri.port)
+        https.use_ssl = true
+        https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        request = Net::HTTP::Post.new(uri.request_uri)
+        request["Content-Type"] = "application/x-www-form-urlencoded"
+        request.set_form_data(
           assertion: jwt,
-          grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+          grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
           client_id: channel_id,
           client_secret: channel_secret,
           scope: scope
         )
-        headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
-        post(endpoint, endpoint_path, payload, headers)
+        response = https.request(request)
+        JSON.parse(response.body)["access_token"]
       end
 
       def jwt
-        private_key_required
-        channel_id_required
-        service_account_required
-
-        if @jwt_expire_at.nil? || Time.now > @jwt_expire_at
-          @jwt = nil
-        end
-        @jwt ||= begin
-          private_key = OpenSSL::PKey::RSA.new private_key
-          header = {"alg" => "RS256", "typ" => "JWT"}
-          @jwt_expire_at = (Time.now + 60 * 60)
-          claim = {
-              "iss" => channel_id,
-              "sub" => service_account,
-              "iat" => Time.now.to_i,
-              "exp" => @jwt_expire_at.to_i
-          }
-          jwt = JSON::JWT.new(claim)
-          
-          jwt.header = header
-          jwt.sign(private_key).to_s
-        end
+        header = { alg: "RS256", typ: "JWT" }
+        payload = {
+          iss: channel_id,
+          sub: service_account,
+          iat: Time.now.to_i,
+          exp: Time.now.to_i + 3600
+        }
+        rsa_private = OpenSSL::PKey::RSA.new(private_key)
+        JWT.encode(payload, rsa_private, "RS256", header)
       end
   
   

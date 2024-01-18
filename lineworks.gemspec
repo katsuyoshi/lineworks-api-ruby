@@ -33,8 +33,8 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   spec.add_dependency 'line-bot-api', '~> 1.28.0'
-  spec.add_dependency 'json-jwt', '~> 1.6'
   spec.add_dependency 'openssl', '~> 3.2'
+  spec.add_dependency 'jwt', '~> 2.7.1'
   
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
