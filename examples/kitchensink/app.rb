@@ -14,8 +14,12 @@ include Lineworks::Bot::Message
 
 def client
   @client ||= Lineworks::Bot::Client.new do |config|
-    config.channel_secret = ENV['LINEWORKS_BOT_SECRET']
-    config.channel_token = ENV['LINEWORKS_ACCESS_TOKEN']
+    config.channel_id = ENV['LINEWORKS_CLIENT_ID']
+    config.channel_secret = ENV['LINEWORKS_CLIENT_SECRET']
+    config.service_account = ENV['LINEWORKS_SERVICE_ACCOUNT']
+    config.bot_secret = ENV['LINEWORKS_BOT_SECRET']
+    config.private_key = ENV['LINEWORKS_PRIVATE_KEY']
+    config.channel_token = config.issue_access_token('bot user.read')
     config.http_options = {
       open_timeout: 5,
       read_timeout: 5,

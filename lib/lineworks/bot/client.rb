@@ -61,6 +61,17 @@ module Lineworks
         JWT.encode(payload, rsa_private, "RS256", header)
       end
   
+      # Override Line::Bot::Client#validate_signature
+      # LINE Bot Api uses channel secret for encoding.
+      # But LINE WORKS Bot Api uses bot secret for encoding.
+      def validate_signature(content, channel_signature, secret = bot_secret)
+        return false if !channel_signature || !channel_secret
+
+        hash = OpenSSL::HMAC.digest(OpenSSL::Digest.new('SHA256'), secret, content)
+        signature = Base64.strict_encode64(hash)
+
+        variable_secure_compare(channel_signature, signature)
+      end
   
       # Send messages to a channel using channel_id.
       # @see: https://developers.worksmobile.com/jp/docs/bot-channel-message-send
@@ -76,7 +87,7 @@ module Lineworks
 
         case messages
         when String
-          payload[:content] = Text.new(messages).to_h
+          payload[:content] = Message::Text.new(messages).to_h
         when Hash
           payload[:content] = messages
         end

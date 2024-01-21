@@ -13,13 +13,12 @@ def client
     config.service_account = ENV['LINEWORKS_SERVICE_ACCOUNT']
     config.bot_secret = ENV['LINEWORKS_BOT_SECRET']
     config.private_key = ENV['LINEWORKS_PRIVATE_KEY']
-    config.channel_token = config.issue_access_token #ENV['LINEWORKS_ACCESS_TOKEN']
+    config.channel_token = config.issue_access_token
   end
 end
 
 post '/callback' do
   body = request.body.read
-
   signature = request.env['HTTP_X_WORKS_SIGNATURE']
   error 400 do 'Bad Request' end unless client.validate_signature(body, signature)
 
