@@ -3,6 +3,7 @@
 For example, the LINE WORKS bot echoes back messages.  
 
 ## Getting started
+
 Download this project.  
 Move to the project directory.  
 Run rake command.  
@@ -19,17 +20,23 @@ Install required gems.
 $ bundle install
 ```
 
-Copy .env.sample file to .env file.  
+Copy sample.env file to .env file.  
 And then fill environment variables to .env file.
 
 ```
-# LINE WORKS's Bot Secret
-LINEWORKS_BOT_SECRET='...'
+# Fill your bot configuration below and rename this file or copy to .env file.
 
-# You need to get an access token first.
-# There is an article about how to get an access token using Postman. Please refer to it.
-# @see: https://qiita.com/mmclsntr/items/eee8d8f3546410fe6652
-LINEWORKS_ACCESS_TOKEN='...'
+# LINE WORKS App's Client ID
+LINEWORKS_CLIENT_ID='...'
+# LINE WORKS App's Service Account
+LINEWORKS_SERVICE_ACCOUNT='...'
+# LINE WORKS App's Client Secret
+LINEWORKS_CLIENT_SECRET='...'
+# LINE WORKS App's Private key
+LINEWORKS_PRIVATE_KEY='...'
+
+# LINE WORKS Bot's Secret
+LINEWORKS_BOT_SECRET='...'
 ```
 
 Run this example.
@@ -41,7 +48,7 @@ $ bundle exec ruby app.rb
 Your app runs on port 4567.
 
 ```
-https://your.base.url:4567/callback
+https://your.base.url:4567
 ```
 
 And use ngrok to publish it.

@@ -48,7 +48,7 @@ gem install lineworks
 
 ## Examples
 
-There are examples in an examples folder.  
+There are examples in the examples folder.  
 
 A simple echo back bot is here. See more details below link.  
 [Echo bot](examples/echobot/README.md)
@@ -64,14 +64,19 @@ Dotenv.load
 
 def client
   @client ||= Lineworks::Bot::Client.new do |config|
-    config.channel_secret = ENV['LINEWORKS_BOT_SECRET']
-    config.channel_token = ENV['LINEWORKS_ACCESS_TOKEN']
+    config.channel_id = ENV['LINEWORKS_CLIENT_ID']
+    config.channel_secret = ENV['LINEWORKS_CLIENT_SECRET']
+    config.service_account = ENV['LINEWORKS_SERVICE_ACCOUNT']
+    config.bot_secret = ENV['LINEWORKS_BOT_SECRET']
+    config.private_key = ENV['LINEWORKS_PRIVATE_KEY']
+  end
+  @client.tap do |c|
+    c.update_access_token 'bot user.read'
   end
 end
 
 post '/callback' do
   body = request.body.read
-
   signature = request.env['HTTP_X_WORKS_SIGNATURE']
   error 400 do 'Bad Request' end unless client.validate_signature(body, signature)
 
