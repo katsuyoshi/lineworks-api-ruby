@@ -5,25 +5,22 @@ require 'lineworks/bot/event'
 require 'json'
 require 'jwt'
 
-
-# @see: message types https://developers.worksmobile.com/jp/docs/bot-send-content
+# This is a authentication part of Client
+# Now only supports Service Account Authentication (JWT).
+# @see: https://developers.worksmobile.com/jp/docs/auth-jwt
 
 module Lineworks
   module Bot
-    # API Client of Line Works Bot SDK Ruby
-    #
-    #   @client ||= Lineworks::Bot::Client.new do |config|
-    #     config.channel_secret = ENV["LINEWORKS_BOT_SECRET"]
-    #     config.channel_token = ENV["LINEWORKS_ACCESS_TOKEN"]
-    #   end
-    class Client < Line::Bot::Client
+
+    class Client
       attr_accessor :oauth_endpoint, :bot_secret, :service_account, :private_key
       attr_accessor :access_token_content
 
+      # Update access token if expired.
       def update_access_token scope='bot'
         if access_token_expired?
           if refresh_token_expired?
-            !!issue_access_token scope
+            !!issue_access_token(scope)
           else
             !!issue_access_token_from_refresh_token
           end
@@ -31,9 +28,28 @@ module Lineworks
           true
         end
       end
+
+      # line-bot-sdk-ruby uses access_token as channel_token.
+      def channel_token
+        c = access_token_content
+        c ? c[:access_token] : nil
+      end
       
       private
 
+      def oauth_endpoint
+        @oauth_endpoint ||= DEFAULT_OAUTH_ENDPOINT
+      end
+
+      # It holds response body of access token.
+      def access_token_content= content
+        content[:issued_at] = Time.now - 60
+        content[:expires_in] = content[:expires_in].to_i
+
+        @access_token_content = content
+      end
+
+      # Query access token was expired or not.
       def access_token_expired?
         c = access_token_content
         return true unless c
@@ -41,15 +57,12 @@ module Lineworks
         c[:issued_at] + c[:expires_in]  < Time.now
       end
 
+      # Query refresh token was expired or not.
       def refresh_token_expired?
         c = access_token_content
         return true unless c
         return true unless c[:issued_at]
         c[:issued_at] + (90 * 24 * 60 * 60)  < Time.now
-      end
-
-      def oauth_endpoint
-        @oauth_endpoint ||= DEFAULT_OAUTH_ENDPOINT
       end
 
       # https://qiita.com/caovanbi/items/8abe98a5641c487e4727
@@ -68,16 +81,16 @@ module Lineworks
           client_secret: channel_secret,
           scope: scope
         )
-p request.body
         response = https.request(request)
-p response.body
-        @access_token_content = JSON.parse(response.body, symbolize_names: true)
-        @access_token_content[:issued_at] = Time.now - 60
-        access_token_content[:access_token]
+        c = JSON.parse(response.body, symbolize_names: true)
+        self.access_token_content = c
+        channel_token
       end
 
       def issue_access_token_from_refresh_token
-        refresh_token = refresh_token_content&[:refresh_token]
+        c = access_token_content
+        return nil unless c
+        refresh_token = c[:refresh_token]
         return nil unless refresh_token
 
         endpoint_path = '/oauth2/v2.0/token'
@@ -93,12 +106,10 @@ p response.body
           client_id: channel_id,
           client_secret: channel_secret
         )
-p request.body
         response = https.request(request)
-p response.body
-        @access_token_content = JSON.parse(response.body, symbolize_names: true)
-        @access_token_content[:issued_at] = Time.now - 60
-        access_token_content[:access_token]
+        c = JSON.parse(response.body, symbolize_names: true)
+        self.access_token_content = c
+        channel_token
       end
 
       def revoke_access_token

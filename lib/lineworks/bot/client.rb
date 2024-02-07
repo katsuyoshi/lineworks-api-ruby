@@ -17,51 +17,14 @@ module Lineworks
     #     config.channel_token = ENV["LINEWORKS_ACCESS_TOKEN"]
     #   end
     class Client < Line::Bot::Client
-      #attr_accessor :channel_token, :channel_id, :channel_secret, :endpoint, :blob_endpoint
-      attr_accessor :oauth_endpoint, :bot_secret, :service_account, :private_key
+      attr_accessor :bot_secret
 
 
       def endpoint
         @endpoint ||= DEFAULT_ENDPOINT
       end
 
-      def oauth_endpoint
-        @oauth_endpoint ||= DEFAULT_OAUTH_ENDPOINT
-      end
-
-      # https://qiita.com/caovanbi/items/8abe98a5641c487e4727
-      def issue_access_token(scope='bot')
-        endpoint_path = '/oauth2/v2.0/token'
-        uri = URI.parse(oauth_endpoint + endpoint_path)
-        https = Net::HTTP.new(uri.host, uri.port)
-        https.use_ssl = true
-        https.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        request = Net::HTTP::Post.new(uri.request_uri)
-        request["Content-Type"] = "application/x-www-form-urlencoded"
-        request.set_form_data(
-          assertion: jwt,
-          grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-          client_id: channel_id,
-          client_secret: channel_secret,
-          scope: scope
-        )
-        response = https.request(request)
-        JSON.parse(response.body)["access_token"]
-      end
-
-      def jwt
-        header = { alg: "RS256", typ: "JWT" }
-        payload = {
-          iss: channel_id,
-          sub: service_account,
-          iat: Time.now.to_i,
-          exp: Time.now.to_i + 3600
-        }
-        rsa_private = OpenSSL::PKey::RSA.new(private_key)
-        JWT.encode(payload, rsa_private, "RS256", header)
-      end
-  
-      # Override Line::Bot::Client#validate_signature
+     # Override Line::Bot::Client#validate_signature
       # LINE Bot Api uses channel secret for encoding.
       # But LINE WORKS Bot Api uses bot secret for encoding.
       def validate_signature(content, channel_signature, secret = bot_secret)

@@ -19,11 +19,13 @@ def client
     config.service_account = ENV['LINEWORKS_SERVICE_ACCOUNT']
     config.bot_secret = ENV['LINEWORKS_BOT_SECRET']
     config.private_key = ENV['LINEWORKS_PRIVATE_KEY']
-    config.channel_token = config.issue_access_token('bot user.read')
     config.http_options = {
       open_timeout: 5,
       read_timeout: 5,
     }
+  end
+  @client.tap do |c|
+    c.update_access_token 'bot user.read'
   end
 end
 
@@ -126,7 +128,7 @@ def handle_message(bot_id, event)
     message_id = event.message['id']
     response = client.get_message_content(message_id)
     tf = Tempfile.open("content")
-    tf.write(response.body)
+    tf.write(response.body) 
     reply_text(bot_id, event, "[MessageType::FILE]\nid:#{message_id}\nfileName:#{event.message['fileName']}\nfileSize:#{event.message['fileSize']}\nreceived #{tf.size} bytes data")
   when Lineworks::Bot::Event::MessageType::Sticker
     handle_sticker(event)

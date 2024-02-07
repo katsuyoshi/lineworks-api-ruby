@@ -13,7 +13,9 @@ def client
     config.service_account = ENV['LINEWORKS_SERVICE_ACCOUNT']
     config.bot_secret = ENV['LINEWORKS_BOT_SECRET']
     config.private_key = ENV['LINEWORKS_PRIVATE_KEY']
-    config.channel_token = config.issue_access_token
+  end
+  @client.tap do |c|
+    c.update_access_token 'bot user.read'
   end
 end
 
