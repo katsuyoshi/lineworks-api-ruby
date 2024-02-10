@@ -15,7 +15,7 @@ def client
     config.private_key = ENV['LINEWORKS_PRIVATE_KEY']
   end
   @client.tap do |c|
-    c.update_access_token 'bot user.read directory.read'
+    c.update_access_token 'bot user.read'
   end
 end
 
@@ -34,8 +34,10 @@ post '/callback' do
       case event.message['text']
       when 'users'
         users = client.users
+p users
+      else
+        client.send_messages_to_channel(bot_id, event.channel_id, event.message['text'])
       end
-      client.send_messages_to_channel(bot_id, event.channel_id, event.message['text'])
     end
   end
 

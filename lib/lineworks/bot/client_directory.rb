@@ -17,12 +17,38 @@ module Lineworks
       def users
         endpoint_path = "/users"
 
-        payload = QueryUsers.new.to_h.to_json
-        post(endpoint, endpoint_path, payload, credentials.merge(headers))
+        payload = QueryUsers.new.to_h
+        get(endpoint, endpoint_path, payload, credentials)
+      end
+
+
+
+      # Fetch data, get content of specified URL.
+      #
+      # @param endpoint_base [String]
+      # @param endpoint_path [String]
+      # @param headers [Hash]
+      #
+      # @return [Net::HTTPResponse]
+      def get(endpoint_base, endpoint_path, queries={}, headers = {})
+        uri = URI.parse(endpoint_base + endpoint_path)
+p "*" * 80, queries
+        uri.query = URI.encode_www_form(queries)
+p "*" * 80, uri.query
+        headers = Lineworks::Bot::DEFAULT_HEADERS.merge(headers)
+        https = Net::HTTP.new(uri.host, uri.port)
+        https.use_ssl = true
+        https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+p "*" * 80, uri.request_uri
+        request = Net::HTTP::Get.new(uri.request_uri, headers)
+        #request["Content-Type"] = "application/json"
+        response = https.request(request)
+        c = JSON.parse(response.body, symbolize_names: true).tap do |h|
+          p h
+        end
       end
 
     end
-
 
   end
 end

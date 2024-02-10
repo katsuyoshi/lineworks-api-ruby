@@ -2,10 +2,18 @@ module Lineworks
   module Bot
     module Directory
       
-      class QueryUserList
+      # Query users in the domain.
+      # params: args [Hash]
+      #   domain_id [String] optional
+      #   count [Integer] optional
+      #   cursor [String] optional
+      #   filter [Symbol] optional :vip
+      #   order [Symbol] optional :name or :time
+      #   sort [Symbol] optional  :asc or :desc
+      class QueryUsers
         attr_accessor :domain_id, :count, :cursor, :filter, :order, :sort
 
-        def initialize(args)
+        def initialize(args={})
           case args
           when Hash
             domain_id = args[:domain_id]
@@ -61,11 +69,11 @@ module Lineworks
           end
         end
 
-
       end
 
       class User
       end
+
     end
   end
 end
