@@ -11,3 +11,5 @@ gem 'lineworks'
 gem 'sinatra'
 
 gem "rackup", "~> 2.1"
+
+gem "activesupport", "~> 7.1"

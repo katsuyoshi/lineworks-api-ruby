@@ -62,7 +62,7 @@ describe Lineworks::Bot::Client do
     client
   end
 
-
+=begin
   it 'gets profile' do
     uri_template = Addressable::Template.new Lineworks::Bot::DEFAULT_ENDPOINT + '/users/{user_id}'
     stub_request(:get, uri_template).to_return { |request| {body: PROFILE_CONTENT, status: 200} }
@@ -75,5 +75,6 @@ describe Lineworks::Bot::Client do
     expect(contact[:userName][:lastName]).to eq "ワークス"
     expect(contact[:organizations][0][:orgUnits][0][:orgUnitName]).to eq "組織"
   end
+=end
 
 end

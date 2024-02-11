@@ -35,6 +35,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'line-bot-api', '~> 1.28.0'
   spec.add_dependency 'openssl', '~> 3.2'
   spec.add_dependency 'jwt', '~> 2.7.1'
+  spec.add_dependency 'activesupport', '~> 7.1'
+
   
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

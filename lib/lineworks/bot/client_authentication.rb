@@ -32,7 +32,7 @@ module Lineworks
       # line-bot-sdk-ruby uses access_token as channel_token.
       def channel_token
         c = access_token_content
-        c ? c[:access_token] : nil
+        c ? c[:access_token] : super
       end
       
       private

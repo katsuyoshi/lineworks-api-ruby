@@ -1,9 +1,12 @@
+require_relative '../obj_base'
+require_relative 'organization'
+
 module Lineworks
   module Bot
     module Directory
       
       # Query users in the domain.
-      # params: args [Hash]
+      # @params: args [Hash]
       #   domain_id [String] optional
       #   count [Integer] optional
       #   cursor [String] optional
@@ -71,7 +74,21 @@ module Lineworks
 
       end
 
-      class User
+      # User class
+      class User < ObjBase
+
+        def initialize(args={})
+          super
+          case args
+          when Hash
+            @raw_data[:userName] = UserName.new(args[:userName]) if args[:userName].is_a?(Hash)
+            @raw_data[:organizations] = (args[:organizations] || []).map { |o| o.is_a?(Hash) ? Organization.new(o) : o }
+          end
+        end
+
+      end
+
+      class UserName < ObjBase
       end
 
     end
