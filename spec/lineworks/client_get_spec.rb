@@ -64,7 +64,7 @@ describe Lineworks::Client do
 
 =begin
   it 'gets profile' do
-    uri_template = Addressable::Template.new Lineworks::Bot::DEFAULT_ENDPOINT + '/users/{user_id}'
+    uri_template = Addressable::Template.new Lineworks::DEFAULT_ENDPOINT + '/users/{user_id}'
     stub_request(:get, uri_template).to_return { |request| {body: PROFILE_CONTENT, status: 200} }
 
     client = generate_client
