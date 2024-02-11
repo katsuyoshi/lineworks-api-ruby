@@ -34,6 +34,8 @@ post '/callback' do
       case event.message['text']
       when 'users'
         users = client.users
+        user_names = users.map{|u| u.user_name.display_name}
+        client.send_messages_to_channel(bot_id, event.channel_id, user_names.join("\n"))
       else
         client.send_messages_to_channel(bot_id, event.channel_id, event.message['text'])
       end

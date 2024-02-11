@@ -1,10 +1,54 @@
 require_relative '../obj_base'
-require_relative 'organization'
+require_relative 'user_organization'
 
 module Lineworks
   module Directory
     
-    # Query users in the domain.
+    # User class
+    class User < ObjBase
+
+      def initialize(args={})
+        super
+        case args
+        when Hash
+          @raw_data[:userName] = UserName.new(args[:userName]) if args[:userName].is_a?(Hash)
+          @raw_data[:organizations] = (args[:organizations] || []).map { |o| o.is_a?(Hash) ? UserOrganization.new(o) : o }
+          @raw_data[:messenger] = Messenger.new(args[:messenger]) if args[:messenger].is_a?(Hash)
+          @raw_data[:customFields] = (args[:customFields] || []).map { |o| o.is_a?(Hash) ? UserCustomField.new(o) : o }
+          @raw_data[:relations] = (args[:relations] || []).map { |o| o.is_a?(Hash) ? UserRelation.new(o) : o }
+        end
+      end
+
+    end
+
+    class UserName < ObjBase
+      def display_name
+        "#{last_name} #{first_name}"
+      end
+    end
+
+    class LeaveOfAbsence < ObjBase
+    end
+
+    class Messenger < ObjBase
+    end
+
+    class UserCustomField < ObjBase
+    end
+
+    class UserRelation < ObjBase
+    end
+
+
+
+
+
+
+
+
+
+
+        # Query users in the domain.
     # @params: args [Hash]
     #   domain_id [String] optional
     #   count [Integer] optional
@@ -73,22 +117,6 @@ module Lineworks
 
     end
 
-    # User class
-    class User < ObjBase
-
-      def initialize(args={})
-        super
-        case args
-        when Hash
-          @raw_data[:userName] = UserName.new(args[:userName]) if args[:userName].is_a?(Hash)
-          @raw_data[:organizations] = (args[:organizations] || []).map { |o| o.is_a?(Hash) ? Organization.new(o) : o }
-        end
-      end
-
-    end
-
-    class UserName < ObjBase
-    end
 
   end
 end
