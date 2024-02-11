@@ -47,7 +47,7 @@ PROFILE_CONTENT = <<"EOS"
 EOS
 
 
-describe Lineworks::Bot::Client do
+describe Lineworks::Client do
   def dummy_config
     {
       channel_token: 'access token',
@@ -55,7 +55,7 @@ describe Lineworks::Bot::Client do
   end
 
   def generate_client
-    client = Lineworks::Bot::Client.new do |config|
+    client = Lineworks::Client.new do |config|
       config.channel_token = dummy_config[:channel_token]
     end
 

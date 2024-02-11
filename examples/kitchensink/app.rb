@@ -13,7 +13,7 @@ set :app_base_url, ENV['APP_BASE_URL']
 include Lineworks::Bot::Message
 
 def client
-  @client ||= Lineworks::Bot::Client.new do |config|
+  @client ||= Lineworks::Client.new do |config|
     config.channel_id = ENV['LINEWORKS_CLIENT_ID']
     config.channel_secret = ENV['LINEWORKS_CLIENT_SECRET']
     config.service_account = ENV['LINEWORKS_SERVICE_ACCOUNT']
