@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'webmock/rspec'
 require 'json'
 
-include Lineworks::Bot::Directory
+include Lineworks::Directory
 
 describe User do
   before(:all) do

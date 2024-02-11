@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'line/bot'
-require 'lineworks/bot/directory'
+require 'lineworks/directory'
 
-include Lineworks::Bot::Directory
+include Lineworks::Directory
 
 # This is a authentication part of Client
 # Now only supports Service Account Authentication (JWT).
