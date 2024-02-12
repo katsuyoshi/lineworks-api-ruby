@@ -33,7 +33,7 @@ module Lineworks
     def get(endpoint_base, endpoint_path, queries={}, headers = {})
       uri = URI.parse(endpoint_base + endpoint_path)
       uri.query = URI.encode_www_form(queries)
-      headers = Lineworks::Bot::DEFAULT_HEADERS.merge(headers)
+      headers = Lineworks::DEFAULT_HEADERS.merge(headers)
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = true
       https.verify_mode = OpenSSL::SSL::VERIFY_NONE

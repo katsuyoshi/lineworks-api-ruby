@@ -5,6 +5,7 @@ require 'lineworks/bot/event'
 require 'json'
 require 'jwt'
 
+include Lineworks::Bot
 
 # @see: message types https://developers.worksmobile.com/jp/docs/bot-send-content
 

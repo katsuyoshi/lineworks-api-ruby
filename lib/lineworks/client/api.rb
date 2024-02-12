@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'lineworks/bot/version'
+require 'lineworks/client/version'
 require_relative 'api'
 
 module Lineworks
