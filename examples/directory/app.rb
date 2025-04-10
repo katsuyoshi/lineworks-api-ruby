@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'sinatra'       # gem 'sinatra'
-require 'lineworks' # gem 'lineworks'
-require 'dotenv'        # gem 'dotenv'
+require 'sinatra'
+require 'lineworks'
+require 'dotenv'
 
 Dotenv.load
 
@@ -31,7 +31,14 @@ post '/callback' do
   when Lineworks::Bot::Event::Message
     case event.type
     when Lineworks::Bot::Event::MessageType::Text
-      client.send_messages_to_channel(bot_id, event.channel_id, event.message['text'])
+      case event.message['text']
+      when 'users'
+        users = client.users
+        user_names = users.map{|u| u.user_name.display_name}
+        client.send_messages_to_channel(bot_id, event.channel_id, user_names.join("\n"))
+      else
+        client.send_messages_to_channel(bot_id, event.channel_id, event.message['text'])
+      end
     end
   end
 

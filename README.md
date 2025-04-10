@@ -13,7 +13,6 @@ Pleas visit official API documentation.
 
 ## Installation
 
-
 Download this project.  
 Move to the project directory.  
 Run rake command.  
@@ -46,6 +45,19 @@ Or install it yourself as:
 gem install lineworks
 ```
 
+## Note
+
+If you are using this with Ruby on Rails and Devise, please ensure that you set config.autoloader to :zeitwerk in config/application.rb.
+
+```
+# config/application.rb
+  class Application < Rails::Application
+    .
+    .
+    config.autoloader = :zeitwerk
+  end
+```
+
 ## Examples
 
 There are examples in the examples folder.  
@@ -63,7 +75,7 @@ require 'dotenv'        # gem 'dotenv'
 Dotenv.load
 
 def client
-  @client ||= Lineworks::Bot::Client.new do |config|
+  @client ||= Lineworks::Client.new do |config|
     config.channel_id = ENV['LINEWORKS_CLIENT_ID']
     config.channel_secret = ENV['LINEWORKS_CLIENT_SECRET']
     config.service_account = ENV['LINEWORKS_SERVICE_ACCOUNT']

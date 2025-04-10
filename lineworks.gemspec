@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'lib/lineworks/bot/version'
+require_relative 'lib/lineworks/client/version'
 
 Gem::Specification.new do |spec|
   spec.name = 'lineworks'
-  spec.version = Lineworks::Bot::VERSION
+  spec.version = Lineworks::VERSION
   spec.authors = ['Katsuyoshi Ito']
   spec.email = ['kito@itosoft.com']
 
@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'line-bot-api', '~> 1.28.0'
   spec.add_dependency 'openssl', '~> 3.2'
   spec.add_dependency 'jwt', '~> 2.7.1'
+  spec.add_dependency "activesupport", ">= 5.0"
   
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

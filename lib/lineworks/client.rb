@@ -1,0 +1,5 @@
+require_relative 'client/version'
+require_relative 'client/api'
+require_relative 'client/client'
+require_relative 'client/client_authentication'
+require_relative 'client/client_directory'
